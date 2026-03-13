@@ -1,0 +1,89 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "DTE Internal API",
+    "version": "0.1.0-phase3",
+    "description": "Contrato inicial da Fase 3 para consulta e sync."
+  },
+  "servers": [
+    {
+      "url": "http://127.0.0.1:3333"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "ApiTokenAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "x-api-token"
+      }
+    }
+  },
+  "security": [
+    {
+      "ApiTokenAuth": []
+    }
+  ],
+  "paths": {
+    "/v1/health/live": {
+      "get": {
+        "summary": "Liveness da API",
+        "security": []
+      }
+    },
+    "/v1/openapi.json": {
+      "get": {
+        "summary": "OpenAPI dinâmico da API",
+        "security": []
+      }
+    },
+    "/v1/health/dte": {
+      "get": {
+        "summary": "Estado consolidado de disponibilidade do DTE"
+      }
+    },
+    "/v1/companies": {
+      "get": {
+        "summary": "Lista empresas com paginacao e filtros"
+      }
+    },
+    "/v1/companies/{contratoId}/messages": {
+      "get": {
+        "summary": "Lista mensagens por empresa"
+      }
+    },
+    "/v1/companies/{contratoId}/messages/unread": {
+      "get": {
+        "summary": "Lista apenas mensagens nao lidas por empresa"
+      }
+    },
+    "/v1/events/unread": {
+      "get": {
+        "summary": "Lista eventos de leitura relacionados a nao lidas"
+      }
+    },
+    "/v1/sync/messages": {
+      "post": {
+        "summary": "Dispara job de sincronizacao de mensagens"
+      }
+    },
+    "/v1/jobs/{jobId}": {
+      "get": {
+        "summary": "Consulta status do job"
+      }
+    },
+    "/v1/alerts/channels": {
+      "get": {
+        "summary": "Lista canais de alerta"
+      },
+      "post": {
+        "summary": "Cria canal webhook de alerta"
+      }
+    },
+    "/v1/alerts/deliveries": {
+      "get": {
+        "summary": "Lista tentativas de notificacao"
+      }
+    }
+  }
+}

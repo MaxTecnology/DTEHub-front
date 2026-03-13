@@ -1,0 +1,23 @@
+node_modules
+dist
+
+# Env locais nunca vão para a imagem
+.env.local
+.env.*.local
+
+# Git
+.git
+.gitignore
+
+# Docs e configs de desenvolvimento
+docs/
+*.md
+*.log
+
+# Testes
+src/test/
+coverage/
+
+# IDE
+.vscode/
+.idea/

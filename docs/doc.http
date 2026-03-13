@@ -1,0 +1,342 @@
+@baseUrl = http://127.0.0.1:3333
+@apiToken = ewEG5tbqkx4eoggUUTTqVO1vt2I6dBaCDSdhsYpKdd0Fofl06hfS98KOCWYDP5Pc
+@contratoId = 347215
+@messageId = 68309
+@documentoId = 3263106
+@jobId = 8d278d34-8d58-46db-a88b-a5bf52fad2c8
+@page = 1
+@pageSize = 20
+@certificateId = ad795679-68d9-460e-8913-3e13609231e3
+@certLabel = cert-prod-cliente-01
+@certPassword = A12345
+@userId = 00000000-0000-0000-0000-000000000000
+@userEmail = admin@cliente.local
+@userPassword = 12345678
+@userAccessToken = cole-o-token-aqui
+
+### Ordem recomendada para uso:
+### 1) Health da API
+### 2) Auth status
+### 3) Auth refresh (quando nao autenticado)
+### 4) Sync messages
+### 5) Consultar job ate "completed"
+### 6) Consultar companies/messages/events
+
+### ------------------------------------------------------------
+### PUBLIC - sem token
+### ------------------------------------------------------------
+
+### Health da API (liveness)
+GET {{baseUrl}}/v1/health/live
+
+### OpenAPI JSON
+GET {{baseUrl}}/v1/openapi.json
+
+### Login de usuario (frontend bearer)
+POST {{baseUrl}}/v1/users/login
+Content-Type: application/json
+
+{
+  "email": "{{userEmail}}",
+  "password": "{{userPassword}}"
+}
+
+### ------------------------------------------------------------
+### PROTECTED - com x-api-token ou Authorization: Bearer
+### ------------------------------------------------------------
+
+### ------------------------------------------------------------
+### USUARIOS (admin/owner)
+### ------------------------------------------------------------
+
+### Criar usuario
+POST {{baseUrl}}/v1/users
+Content-Type: application/json
+x-api-token: {{apiToken}}
+
+{
+  "email": "admin@admin.com",
+  "fullName": "Administrador",
+  "role": "admin",
+  "password": "Pasword@12",
+  "isActive": true
+}
+
+### Listar usuarios
+GET {{baseUrl}}/v1/users
+x-api-token: {{apiToken}}
+
+### Auditoria de usuarios
+GET {{baseUrl}}/v1/users/audit?limit=50
+x-api-token: {{apiToken}}
+
+### Alterar status de usuario
+PATCH {{baseUrl}}/v1/users/{{userId}}/status
+Content-Type: application/json
+x-api-token: {{apiToken}}
+
+{
+  "isActive": false
+}
+
+### Resetar senha de usuario
+POST {{baseUrl}}/v1/users/{{userId}}/reset-password
+Content-Type: application/json
+x-api-token: {{apiToken}}
+
+{
+  "newPassword": "123456789"
+}
+
+### Meu usuario com bearer
+GET {{baseUrl}}/v1/users/me
+Authorization: Bearer {{userAccessToken}}
+
+### Logout bearer
+POST {{baseUrl}}/v1/users/logout
+Authorization: Bearer {{userAccessToken}}
+
+### Estado consolidado de disponibilidade do DTE
+GET {{baseUrl}}/v1/health/dte
+x-api-token: {{apiToken}}
+
+### 1) Status da autenticacao DTE da API
+GET {{baseUrl}}/v1/auth/status
+x-api-token: {{apiToken}}
+
+### 2) Renovar autenticacao DTE (PFX quando configurado)
+### IMPORTANTE: enviar JSON evita erro de content-type
+POST {{baseUrl}}/v1/auth/refresh
+Content-Type: application/json
+x-api-token: {{apiToken}}
+
+{}
+
+### ------------------------------------------------------------
+### CERTIFICADOS (fase 8)
+### ------------------------------------------------------------
+
+### Lista certificados (metadados sem segredo)
+GET {{baseUrl}}/v1/certificates
+x-api-token: {{apiToken}}
+
+### Certificado ativo atual (ou null)
+GET {{baseUrl}}/v1/certificates/current
+x-api-token: {{apiToken}}
+
+### Auditoria de certificados
+GET {{baseUrl}}/v1/certificates/audit?limit=20
+x-api-token: {{apiToken}}
+
+### Upload de PFX (recomendado: multipart com arquivo)
+### Request pronta para REST Client (ajuste caminho do arquivo na linha "< ./certs/certificado.pfx")
+POST {{baseUrl}}/v1/certificates/upload
+Content-Type: multipart/form-data; boundary=----DTECertBoundary
+x-api-token: {{apiToken}}
+x-requested-by: admin-local
+
+------DTECertBoundary
+Content-Disposition: form-data; name="label"
+
+{{certLabel}}
+------DTECertBoundary
+Content-Disposition: form-data; name="password"
+
+{{certPassword}}
+------DTECertBoundary
+Content-Disposition: form-data; name="activate"
+
+true
+------DTECertBoundary
+Content-Disposition: form-data; name="file"; filename="certificado.pfx"
+Content-Type: application/x-pkcs12
+
+< ./certs/certificado.pfx
+------DTECertBoundary--
+
+### ------------------------------------------------------------
+### Upload de PFX via terminal (PowerShell/curl.exe)
+### Exemplo cURL:
+### curl.exe -X POST {{baseUrl}}/v1/certificates/upload ^
+###   -H "x-api-token: {{apiToken}}" ^
+###   -H "x-requested-by: admin-local" ^
+###   -F "label={{certLabel}}" ^
+###   -F "password={{certPassword}}" ^
+###   -F "activate=true" ^
+###   -F "file=@./certs/certificado.pfx;type=application/x-pkcs12"
+
+### Fallback JSON (base64 em linha unica)
+POST {{baseUrl}}/v1/certificates/upload
+Content-Type: application/json
+x-api-token: {{apiToken}}
+x-requested-by: admin-local
+
+{
+  "label": "cert-prod-cliente-01",
+  "pfxBase64": "MII...",
+  "password": "A12345",
+  "activate": true
+}
+
+### Ativar certificado especifico
+POST {{baseUrl}}/v1/certificates/{{certificateId}}/activate
+x-api-token: {{apiToken}}
+x-requested-by: admin-local
+
+### Revogar certificado especifico
+POST {{baseUrl}}/v1/certificates/{{certificateId}}/revoke
+Content-Type: application/json
+x-api-token: {{apiToken}}
+x-requested-by: admin-local
+
+{
+  "reason": "troca programada"
+}
+
+### Testar login DTE com certificado especifico
+POST {{baseUrl}}/v1/certificates/{{certificateId}}/test-login
+x-api-token: {{apiToken}}
+x-requested-by: admin-local
+
+### Metricas de resiliencia HTTP (retry/circuit breaker)
+GET {{baseUrl}}/v1/metrics/dte-http
+x-api-token: {{apiToken}}
+
+### Dashboard operacional (sync, mensagens, nao lidas, incidentes)
+GET {{baseUrl}}/v1/ops/dashboard
+x-api-token: {{apiToken}}
+
+### ------------------------------------------------------------
+### SYNC REAL DTE - dispara coleta + ingestao
+### ------------------------------------------------------------
+
+### 3) Disparar sync GERAL (todas as empresas visiveis da sessao)
+### Nao depende de DTE_TARGET_IDS_CSV
+POST {{baseUrl}}/v1/sync/messages
+Content-Type: application/json
+x-api-token: {{apiToken}}
+
+{
+  "dryRun": false
+}
+
+### 3b) Sync focado por empresa alvo (opcional)
+POST {{baseUrl}}/v1/sync/messages
+Content-Type: application/json
+x-api-token: {{apiToken}}
+
+{
+  "targetIds": ["{{contratoId}}"],
+  "maxCompanies": 1,
+  "dryRun": false
+}
+
+### 4) Consultar status do job
+### Copie o jobId retornado em data.jobId para a variavel @jobId
+GET {{baseUrl}}/v1/jobs/{{jobId}}
+x-api-token: {{apiToken}}
+
+### ------------------------------------------------------------
+### CONSULTAS (depois do job completed)
+### ------------------------------------------------------------
+
+### 5) Lista empresas
+GET {{baseUrl}}/v1/companies?page={{page}}&pageSize={{pageSize}}
+x-api-token: {{apiToken}}
+
+### Dica:
+### 1) rode sync geral
+### 2) pegue um contratoId real da resposta
+### 3) atualize @contratoId neste arquivo
+
+### Lista empresas com nao lidas
+GET {{baseUrl}}/v1/companies?page={{page}}&pageSize={{pageSize}}&onlyWithUnread=true
+x-api-token: {{apiToken}}
+
+### Mensagens da empresa
+GET {{baseUrl}}/v1/companies/{{contratoId}}/messages?page={{page}}&pageSize={{pageSize}}
+x-api-token: {{apiToken}}
+
+### Detalhe da mensagem (conteudo persistido sem abrir no portal DTE)
+### Use messageId retornado em "Mensagens da empresa"
+GET {{baseUrl}}/v1/companies/{{contratoId}}/messages/{{messageId}}
+x-api-token: {{apiToken}}
+
+### Visao limpa para front (sem payload bruto)
+GET {{baseUrl}}/v1/companies/{{contratoId}}/messages/{{messageId}}/view
+x-api-token: {{apiToken}}
+
+### Metadados do documento e estado de cache no storage
+GET {{baseUrl}}/v1/companies/{{contratoId}}/messages/{{messageId}}/documents/{{documentoId}}
+x-api-token: {{apiToken}}
+
+### Forcar cache do documento no MinIO (fase 7 base)
+POST {{baseUrl}}/v1/companies/{{contratoId}}/messages/{{messageId}}/documents/{{documentoId}}/cache
+Content-Type: application/json
+x-api-token: {{apiToken}}
+
+{
+  "force": false
+}
+
+### Download de documento/PDF sem abrir mensagem no portal
+### 1) pegue documentoId no endpoint /view
+### 2) delivery=proxy streama binario pela API
+GET {{baseUrl}}/v1/companies/{{contratoId}}/messages/{{messageId}}/documents/{{documentoId}}/download?delivery=proxy
+x-api-token: {{apiToken}}
+
+### Download por redirect (URL assinada quando storage estiver com objeto)
+GET {{baseUrl}}/v1/companies/{{contratoId}}/messages/{{messageId}}/documents/{{documentoId}}/download?delivery=redirect
+x-api-token: {{apiToken}}
+
+### Download sem auto-cache (retorna 202 se ainda nao estiver no storage)
+GET {{baseUrl}}/v1/companies/{{contratoId}}/messages/{{messageId}}/documents/{{documentoId}}/download?delivery=proxy&autoFetch=false
+x-api-token: {{apiToken}}
+
+### Download em base64 (debug para clientes que nao salvam binario corretamente)
+GET {{baseUrl}}/v1/companies/{{contratoId}}/messages/{{messageId}}/documents/{{documentoId}}/download?delivery=proxy&format=base64
+x-api-token: {{apiToken}}
+
+### Mensagens nao lidas da empresa
+GET {{baseUrl}}/v1/companies/{{contratoId}}/messages/unread?page={{page}}&pageSize={{pageSize}}
+x-api-token: {{apiToken}}
+
+### Eventos de nao lidas filtrando por empresa
+GET {{baseUrl}}/v1/events/unread?page={{page}}&pageSize={{pageSize}}&contratoId={{contratoId}}
+x-api-token: {{apiToken}}
+
+### ------------------------------------------------------------
+### ALERTAS
+### ------------------------------------------------------------
+
+### Listar canais de alerta
+GET {{baseUrl}}/v1/alerts/channels?page={{page}}&pageSize={{pageSize}}
+x-api-token: {{apiToken}}
+
+### Listar entregas de notificacao
+GET {{baseUrl}}/v1/alerts/deliveries?page={{page}}&pageSize={{pageSize}}
+x-api-token: {{apiToken}}
+
+### Criar canal webhook (ajuste endpointUrl/secret)
+POST {{baseUrl}}/v1/alerts/channels
+Content-Type: application/json
+x-api-token: {{apiToken}}
+
+{
+  "name": "webhook-teste",
+  "endpointUrl": "https://seu-webhook.com/notify",
+  "secret": "seu-segredo",
+  "enabled": true,
+  "headersJson": {
+    "X-Source": "dte-api"
+  },
+  "timeoutMs": 10000,
+  "maxAttempts": 8
+}
+
+### ------------------------------------------------------------
+### TESTE DE SEGURANCA (esperado 401)
+### ------------------------------------------------------------
+
+### Endpoint protegido sem token (deve retornar 401)
+GET {{baseUrl}}/v1/companies?page=1&pageSize=5

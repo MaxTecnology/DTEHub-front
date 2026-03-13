@@ -1,0 +1,1275 @@
+{
+    "status": 200,
+    "response": {
+        "beans": [
+            {
+                "processos": [
+                    {
+                        "id": 0
+                    }
+                ],
+                "respostas": [
+                    {
+                        "idExpedPai": 12477,
+                        "data": "2022-05-13",
+                        "active": true,
+                        "expedDests": [
+                            {
+                                "agente": {
+                                    "idDepartamento": 110,
+                                    "active": true,
+                                    "departamento": {
+                                        "active": true,
+                                        "id": 110,
+                                        "descricao": "Superintendência da Receita",
+                                        "status": 1
+                                    },
+                                    "id": 914046,
+                                    "descricao": "HEITOR DE ARAGÃO BATISTA",
+                                    "status": 1
+                                },
+                                "expedGrupo": {
+                                    "id": 0
+                                },
+                                "idExpedGrupo": 0,
+                                "active": true,
+                                "idAgente": 914046,
+                                "idAgenteAutor": 37108,
+                                "isOculto": false,
+                                "idDepartamento": 0,
+                                "idExped": 12608,
+                                "dataLeitura": "2022-05-16 08:43:51",
+                                "departamento": {
+                                    "id": 0
+                                },
+                                "id": 12415,
+                                "dataCadastro": "2022-05-13 16:21:35",
+                                "isCopia": false,
+                                "status": 3
+                            }
+                        ],
+                        "expedEmits": [
+                            {
+                                "agente": {
+                                    "idDepartamento": 0,
+                                    "active": true,
+                                    "departamento": {
+                                        "id": 0
+                                    },
+                                    "id": 37108,
+                                    "descricao": "SANTANA E CIA HOME CENTER LTDA",
+                                    "status": 1
+                                },
+                                "idExped": 12608,
+                                "active": true,
+                                "id": 12437,
+                                "idAgente": 37108,
+                                "dataCadastro": "2022-05-13 16:21:35",
+                                "status": 1
+                            }
+                        ],
+                        "descricao": "Segue em anexo extrato de arrecadação do período de 01/01/2021 a 03/05/2022.",
+                        "idEfiscOpConHono": 0,
+                        "servicoRealizado": {
+                            "documentos": [],
+                            "active": true,
+                            "id": 140278,
+                            "atoNumero": "140.278.132/2022",
+                            "status": 2
+                        },
+                        "assunto": "Falta de recolhimento do ICMS declarado",
+                        "documentos": [
+                            {
+                                "active": true,
+                                "nomeOriginal": "DenunciaEspontanea ICMS.pdf",
+                                "id": 758014,
+                                "url": "download?d\u003db16e2d4d-062d-44fc-8cbd-9348e99a9637",
+                                "status": 1
+                            },
+                            {
+                                "active": true,
+                                "nomeOriginal": "PLANILHA DE CONSOLIDAÇÃO FILIAL 10.pdf",
+                                "id": 758016,
+                                "url": "download?d\u003d27b33bf4-7ef7-41e9-ad7a-d2d3f601f55d",
+                                "status": 1
+                            },
+                            {
+                                "active": true,
+                                "nomeOriginal": "PROTOCOLO PARCELAMENTO.pdf",
+                                "id": 758015,
+                                "url": "download?d\u003de3a15c69-f8fb-4de9-8f94-310ec25b769f",
+                                "status": 1
+                            },
+                            {
+                                "active": true,
+                                "nomeOriginal": "REQUERIMENTO SEFAZ.pdf",
+                                "id": 758017,
+                                "url": "download?d\u003d8c5432f4-c9ca-4078-8bbf-d06c8405a571",
+                                "status": 1
+                            }
+                        ],
+                        "id": 12608,
+                        "idServicoRealizado": 140278,
+                        "status": 1
+                    }
+                ],
+                "idExpedPai": 0,
+                "data": "2022-05-03",
+                "active": true,
+                "expedDests": [
+                    {
+                        "agente": {
+                            "idDepartamento": 0,
+                            "active": true,
+                            "departamento": {
+                                "id": 0
+                            },
+                            "id": 37104,
+                            "descricao": "SANTANA E CIA HOME CENTER LTDA",
+                            "status": 1
+                        },
+                        "expedGrupo": {
+                            "id": 0
+                        },
+                        "idExpedGrupo": 0,
+                        "active": true,
+                        "idAgente": 37104,
+                        "idAgenteAutor": 914046,
+                        "isOculto": false,
+                        "idDepartamento": 0,
+                        "idExped": 12477,
+                        "dataLeitura": "2022-05-11 11:44:16",
+                        "departamento": {
+                            "id": 0
+                        },
+                        "id": 12297,
+                        "dataCadastro": "2022-05-03 09:17:24",
+                        "isCopia": false,
+                        "status": 1
+                    }
+                ],
+                "expedEmits": [
+                    {
+                        "agente": {
+                            "idDepartamento": 110,
+                            "active": true,
+                            "departamento": {
+                                "active": true,
+                                "id": 110,
+                                "descricao": "Superintendência da Receita",
+                                "status": 1
+                            },
+                            "id": 914046,
+                            "descricao": "HEITOR DE ARAGÃO BATISTA",
+                            "status": 1
+                        },
+                        "idExped": 12477,
+                        "active": true,
+                        "id": 12308,
+                        "idAgente": 914046,
+                        "dataCadastro": "2022-05-03 09:17:24",
+                        "status": 1
+                    }
+                ],
+                "descricao": "Segue em anexo extrato de arrecadação do período de 01/01/2021 a 03/05/2022.",
+                "idEfiscOpConHono": 0,
+                "servicoRealizado": {
+                    "documentos": [
+                        {
+                            "active": true,
+                            "nomeOriginal": "Notificação Santana 1.pdf",
+                            "id": 744583,
+                            "url": "download?d\u003db311185d-e26e-4ce1-aa40-8bc0964e3968",
+                            "status": 1
+                        }
+                    ],
+                    "active": true,
+                    "id": 138537,
+                    "atoNumero": "110/1/1.812/815/2022",
+                    "status": 2
+                },
+                "assunto": "Falta de recolhimento do ICMS declarado",
+                "documentos": [
+                    {
+                        "active": true,
+                        "nomeOriginal": "Comprovante de Protocolo de Expediente.pdf",
+                        "id": 758023,
+                        "url": "/download?d\u003d0fb75e51-a03d-4de2-9281-17e672161245",
+                        "status": 1
+                    }
+                ],
+                "id": 12477,
+                "idServicoRealizado": 138537,
+                "status": 1
+            },
+            {
+                "processos": [
+                    {
+                        "id": 0
+                    }
+                ],
+                "respostas": [],
+                "idExpedPai": 0,
+                "data": "2022-12-20",
+                "active": true,
+                "expedDests": [
+                    {
+                        "agente": {
+                            "idDepartamento": 0,
+                            "active": true,
+                            "departamento": {
+                                "id": 0
+                            },
+                            "id": 37104,
+                            "descricao": "SANTANA E CIA HOME CENTER LTDA",
+                            "status": 1
+                        },
+                        "expedGrupo": {
+                            "id": 0
+                        },
+                        "idExpedGrupo": 0,
+                        "active": true,
+                        "idAgente": 37104,
+                        "idAgenteAutor": 914051,
+                        "isOculto": false,
+                        "idDepartamento": 0,
+                        "idExped": 17900,
+                        "dataLeitura": "2022-12-27 07:37:42",
+                        "departamento": {
+                            "id": 0
+                        },
+                        "id": 18150,
+                        "dataCadastro": "2022-12-20 11:51:44",
+                        "isCopia": false,
+                        "status": 1
+                    }
+                ],
+                "expedEmits": [
+                    {
+                        "agente": {
+                            "idDepartamento": 138,
+                            "active": true,
+                            "departamento": {
+                                "active": true,
+                                "id": 138,
+                                "descricao": "Gerência de Arrecadação e Crédito Tributário.",
+                                "status": 1
+                            },
+                            "id": 914051,
+                            "descricao": "LUCAS VASQUES CAMELO",
+                            "status": 1
+                        },
+                        "idExped": 17900,
+                        "active": true,
+                        "id": 17679,
+                        "idAgente": 914051,
+                        "dataCadastro": "2022-12-20 11:51:44",
+                        "status": 1
+                    }
+                ],
+                "descricao": "REFERENTE A CERTIDÃO DE DÉBITO DECLARADO - CDD (DENÚNCIA ESPONTÂNEA) 1107495",
+                "idEfiscOpConHono": 0,
+                "servicoRealizado": {
+                    "documentos": [
+                        {
+                            "active": true,
+                            "nomeOriginal": "Comunicação débitos lavrados 1.pdf",
+                            "id": 1120234,
+                            "url": "download?d\u003d2f38f959-3b01-476f-9df4-3267f78ec9c5",
+                            "status": 1
+                        }
+                    ],
+                    "active": true,
+                    "id": 173432,
+                    "atoNumero": "138/1/1.812/4597/2022",
+                    "status": 2
+                },
+                "assunto": "COMUNICAÇÃO DE DÉBITOS DENUNCIADOS",
+                "documentos": [
+                    {
+                        "active": true,
+                        "nomeOriginal": "Extrato consolidação.pdf",
+                        "id": 1120241,
+                        "url": "download?d\u003dc13f942f-e5f0-4ed4-9671-d82b8a1fe76a",
+                        "status": 1
+                    },
+                    {
+                        "active": true,
+                        "nomeOriginal": "DAR_CB Web.pdf",
+                        "id": 1120242,
+                        "url": "download?d\u003def76a449-5a0a-4d0c-b247-a6954ddbbf02",
+                        "status": 1
+                    },
+                    {
+                        "active": true,
+                        "nomeOriginal": "ExtratoDebitoContribuinte.pdf",
+                        "id": 1120243,
+                        "url": "download?d\u003d389aa514-692e-4763-beea-1d2b5fac3591",
+                        "status": 1
+                    },
+                    {
+                        "active": true,
+                        "nomeOriginal": "ConfissaoDebito.pdf",
+                        "id": 1120244,
+                        "url": "download?d\u003d18892eef-16e7-4a9a-b2ad-bf48e61e6675",
+                        "status": 1
+                    },
+                    {
+                        "active": true,
+                        "nomeOriginal": "Comprovante de Envio de Notificação.pdf",
+                        "id": 1120259,
+                        "url": "/download?d\u003da093d500-9236-44c1-81da-b9aa8219fb88",
+                        "status": 1
+                    },
+                    {
+                        "active": true,
+                        "nomeOriginal": "Comprovante de Leitura de Notificação.pdf",
+                        "id": 1135121,
+                        "url": "/download?d\u003d3dfc797f-c6f8-4b9c-b7e1-fd9e015036b6",
+                        "status": 1
+                    }
+                ],
+                "id": 17900,
+                "idServicoRealizado": 173432,
+                "status": 1
+            },
+            {
+                "processos": [
+                    {
+                        "id": 0
+                    }
+                ],
+                "respostas": [
+                    {
+                        "idExpedPai": 22456,
+                        "data": "2023-06-30",
+                        "active": true,
+                        "expedDests": [
+                            {
+                                "agente": {
+                                    "idDepartamento": 329,
+                                    "active": true,
+                                    "departamento": {
+                                        "active": true,
+                                        "id": 329,
+                                        "descricao": "Gerência de Arrecadação e Crédito Tributário ",
+                                        "status": 1
+                                    },
+                                    "id": 898718,
+                                    "descricao": "ANDRE LUIS LIMA FRANCA",
+                                    "status": 1
+                                },
+                                "expedGrupo": {
+                                    "id": 0
+                                },
+                                "idExpedGrupo": 0,
+                                "active": true,
+                                "idAgente": 898718,
+                                "idAgenteAutor": 37108,
+                                "isOculto": false,
+                                "idDepartamento": 0,
+                                "idExped": 23456,
+                                "departamento": {
+                                    "id": 0
+                                },
+                                "id": 23699,
+                                "dataCadastro": "2023-06-30 16:45:33",
+                                "isCopia": false,
+                                "status": 1
+                            }
+                        ],
+                        "expedEmits": [
+                            {
+                                "agente": {
+                                    "idDepartamento": 0,
+                                    "active": true,
+                                    "departamento": {
+                                        "id": 0
+                                    },
+                                    "id": 37108,
+                                    "descricao": "SANTANA E CIA HOME CENTER LTDA",
+                                    "status": 1
+                                },
+                                "idExped": 23456,
+                                "active": true,
+                                "id": 23375,
+                                "idAgente": 37108,
+                                "dataCadastro": "2023-06-30 16:45:33",
+                                "status": 1
+                            }
+                        ],
+                        "descricao": "Tendo em vista monitoramentos efetuados nos débitos declarados através do SPED/EFD (Sistema\nPúblico de Escrituração Digital), a partir da competência 01/2021, não foram identificados\npagamentos para os valores listados em anexo a esta notificação",
+                        "idEfiscOpConHono": 0,
+                        "servicoRealizado": {
+                            "documentos": [],
+                            "active": true,
+                            "id": 201474,
+                            "atoNumero": "201.474.1409/2023",
+                            "status": 2
+                        },
+                        "assunto": "NOTIFICAÇÃO N° 888/2023",
+                        "documentos": [
+                            {
+                                "active": true,
+                                "nomeOriginal": "REQUERIMENTO SANTANA E CIA 10.pdf",
+                                "id": 1503939,
+                                "url": "download?d\u003daa8ee18c-a5e4-4c53-b7ee-2eba246aab5f",
+                                "status": 1
+                            }
+                        ],
+                        "id": 23456,
+                        "idServicoRealizado": 201474,
+                        "status": 1
+                    }
+                ],
+                "idExpedPai": 0,
+                "data": "2023-06-14",
+                "active": true,
+                "expedDests": [
+                    {
+                        "agente": {
+                            "idDepartamento": 0,
+                            "active": true,
+                            "departamento": {
+                                "id": 0
+                            },
+                            "id": 37104,
+                            "descricao": "SANTANA E CIA HOME CENTER LTDA",
+                            "status": 1
+                        },
+                        "expedGrupo": {
+                            "id": 0
+                        },
+                        "idExpedGrupo": 0,
+                        "active": true,
+                        "idAgente": 37104,
+                        "idAgenteAutor": 898718,
+                        "isOculto": false,
+                        "idDepartamento": 0,
+                        "idExped": 22456,
+                        "dataLeitura": "2023-06-30 07:55:42",
+                        "departamento": {
+                            "id": 0
+                        },
+                        "id": 22668,
+                        "dataCadastro": "2023-06-14 09:30:02",
+                        "isCopia": false,
+                        "status": 1
+                    }
+                ],
+                "expedEmits": [
+                    {
+                        "agente": {
+                            "idDepartamento": 329,
+                            "active": true,
+                            "departamento": {
+                                "active": true,
+                                "id": 329,
+                                "descricao": "Gerência de Arrecadação e Crédito Tributário ",
+                                "status": 1
+                            },
+                            "id": 898718,
+                            "descricao": "ANDRE LUIS LIMA FRANCA",
+                            "status": 1
+                        },
+                        "idExped": 22456,
+                        "active": true,
+                        "id": 22195,
+                        "idAgente": 898718,
+                        "dataCadastro": "2023-06-14 09:30:02",
+                        "status": 1
+                    }
+                ],
+                "descricao": "Tendo em vista monitoramentos efetuados nos débitos declarados através do SPED/EFD (Sistema\nPúblico de Escrituração Digital), a partir da competência 01/2021, não foram identificados\npagamentos para os valores listados em anexo a esta notificação",
+                "idEfiscOpConHono": 0,
+                "servicoRealizado": {
+                    "documentos": [
+                        {
+                            "active": true,
+                            "nomeOriginal": "888 - SANTANA E CIA HOME CENTER LTDA - EPP.pdf",
+                            "id": 1473551,
+                            "url": "download?d\u003d38aad588-6d7b-42aa-aa68-e4541833ecac",
+                            "status": 1
+                        }
+                    ],
+                    "active": true,
+                    "id": 199162,
+                    "atoNumero": "329/1/1.812/2658/2023",
+                    "status": 2
+                },
+                "assunto": "NOTIFICAÇÃO N° 888/2023",
+                "documentos": [
+                    {
+                        "active": true,
+                        "nomeOriginal": "888 - SANTANA E CIA HOME CENTER LTDA - EPP.pdf",
+                        "id": 1473562,
+                        "url": "download?d\u003d9e0b0e6b-631b-4113-b8e1-006943c9c4ff",
+                        "status": 1
+                    },
+                    {
+                        "active": true,
+                        "nomeOriginal": "Comprovante de Envio de Notificação.pdf",
+                        "id": 1473567,
+                        "url": "/download?d\u003de1ff1f0f-a5d1-4cbe-922c-563deeb150c5",
+                        "status": 1
+                    },
+                    {
+                        "active": true,
+                        "nomeOriginal": "Comprovante de Leitura de Notificação.pdf",
+                        "id": 1502636,
+                        "url": "/download?d\u003d7b945848-800b-4587-9b05-14781ef96e15",
+                        "status": 1
+                    },
+                    {
+                        "active": true,
+                        "nomeOriginal": "Comprovante de Protocolo de Expediente.pdf",
+                        "id": 1503942,
+                        "url": "/download?d\u003d4e67e585-39d3-468b-b2ce-00e3ff431370",
+                        "status": 1
+                    }
+                ],
+                "id": 22456,
+                "idServicoRealizado": 199162,
+                "status": 1
+            },
+            {
+                "processos": [
+                    {
+                        "id": 0
+                    }
+                ],
+                "respostas": [],
+                "idExpedPai": 0,
+                "data": "2024-10-15",
+                "active": true,
+                "expedDests": [
+                    {
+                        "agente": {
+                            "idDepartamento": 0,
+                            "active": true,
+                            "departamento": {
+                                "id": 0
+                            },
+                            "id": 37104,
+                            "descricao": "SANTANA E CIA HOME CENTER LTDA",
+                            "status": 1
+                        },
+                        "expedGrupo": {
+                            "id": 0
+                        },
+                        "idExpedGrupo": 0,
+                        "active": true,
+                        "idAgente": 37104,
+                        "idAgenteAutor": 898718,
+                        "isOculto": false,
+                        "idDepartamento": 0,
+                        "idExped": 44501,
+                        "dataLeitura": "2024-10-29 16:11:22",
+                        "departamento": {
+                            "id": 0
+                        },
+                        "id": 44882,
+                        "dataCadastro": "2024-10-15 11:09:27",
+                        "isCopia": false,
+                        "status": 1
+                    }
+                ],
+                "expedEmits": [
+                    {
+                        "agente": {
+                            "idDepartamento": 329,
+                            "active": true,
+                            "departamento": {
+                                "active": true,
+                                "id": 329,
+                                "descricao": "Gerência de Arrecadação e Crédito Tributário ",
+                                "status": 1
+                            },
+                            "id": 898718,
+                            "descricao": "ANDRE LUIS LIMA FRANCA",
+                            "status": 1
+                        },
+                        "idExped": 44501,
+                        "active": true,
+                        "id": 45380,
+                        "idAgente": 898718,
+                        "dataCadastro": "2024-10-15 11:09:27",
+                        "status": 1
+                    }
+                ],
+                "descricao": "¿ COBRANÇA ¿ ICMS NORMAL DECLARADO\nNO SPED 16619412001035",
+                "idEfiscOpConHono": 0,
+                "servicoRealizado": {
+                    "documentos": [
+                        {
+                            "active": true,
+                            "nomeOriginal": "NOTIFICAÇÃO 972.pdf",
+                            "id": 2574807,
+                            "url": "download?d\u003d1b29757e-eb55-441c-9966-7101a91820e4",
+                            "status": 1
+                        }
+                    ],
+                    "active": true,
+                    "id": 286749,
+                    "atoNumero": "329/1/1.812/4605/2024",
+                    "status": 2
+                },
+                "assunto": "NOTIFICAÇÃO Nº 972/2024 - SEFAZ",
+                "documentos": [
+                    {
+                        "active": true,
+                        "nomeOriginal": "NOTIFICAÇÃO 972.pdf",
+                        "id": 2574813,
+                        "url": "download?d\u003d913c306c-ec3e-4215-abe7-0c911acba2c6",
+                        "status": 1
+                    },
+                    {
+                        "active": true,
+                        "nomeOriginal": "Comprovante de Envio de Notificação.pdf",
+                        "id": 2574818,
+                        "url": "/download?d\u003df6dcc7e6-205c-4c36-a40c-8eab34f9d468",
+                        "status": 1
+                    },
+                    {
+                        "active": true,
+                        "nomeOriginal": "Comprovante de Leitura de Expediente.pdf",
+                        "id": 2615234,
+                        "url": "/download?d\u003df267f604-48f4-4fb5-9bc3-92662e53a502",
+                        "status": 1
+                    }
+                ],
+                "id": 44501,
+                "idServicoRealizado": 286749,
+                "status": 1
+            },
+            {
+                "processos": [
+                    {
+                        "id": 0
+                    }
+                ],
+                "respostas": [],
+                "idExpedPai": 0,
+                "data": "2024-02-14",
+                "active": true,
+                "expedDests": [
+                    {
+                        "agente": {
+                            "idDepartamento": 0,
+                            "active": true,
+                            "departamento": {
+                                "id": 0
+                            },
+                            "id": 37104,
+                            "descricao": "SANTANA E CIA HOME CENTER LTDA",
+                            "status": 1
+                        },
+                        "expedGrupo": {
+                            "id": 0
+                        },
+                        "idExpedGrupo": 0,
+                        "active": true,
+                        "idAgente": 37104,
+                        "idAgenteAutor": 856245,
+                        "isOculto": false,
+                        "idDepartamento": 0,
+                        "idExped": 32740,
+                        "dataLeitura": "2024-02-15 09:22:40",
+                        "departamento": {
+                            "id": 0
+                        },
+                        "id": 32461,
+                        "dataCadastro": "2024-02-14 15:04:29",
+                        "isCopia": false,
+                        "status": 1
+                    }
+                ],
+                "expedEmits": [
+                    {
+                        "agente": {
+                            "idDepartamento": 138,
+                            "active": true,
+                            "departamento": {
+                                "active": true,
+                                "id": 138,
+                                "descricao": "Gerência de Arrecadação e Crédito Tributário.",
+                                "status": 1
+                            },
+                            "id": 856245,
+                            "descricao": "MARCO HELDER CHRISTONI",
+                            "status": 1
+                        },
+                        "idExped": 32740,
+                        "active": true,
+                        "id": 31577,
+                        "idAgente": 856245,
+                        "dataCadastro": "2024-02-14 15:04:29",
+                        "status": 1
+                    }
+                ],
+                "descricao": "COBRANÇA ¿ ICMS NORMAL DECLARADO NO SPED",
+                "idEfiscOpConHono": 0,
+                "servicoRealizado": {
+                    "documentos": [
+                        {
+                            "active": true,
+                            "nomeOriginal": "SANTANA E CIA HOME CENTER LTDA - EPP.pdf",
+                            "id": 1976426,
+                            "url": "download?d\u003dfa0ab700-bbb6-4403-99cb-190245cdc111",
+                            "status": 1
+                        }
+                    ],
+                    "active": true,
+                    "id": 236343,
+                    "atoNumero": "138/1/1.812/743/2024",
+                    "status": 2
+                },
+                "assunto": "SEFAZ/AL - NOTIFICAÇÃO Nº 216/2024/SEFAZ",
+                "documentos": [
+                    {
+                        "active": true,
+                        "nomeOriginal": "Comprovante de Envio de Notificação.pdf",
+                        "id": 1976433,
+                        "url": "/download?d\u003dc0e1dc5b-49d2-4cda-b0e2-ffde0cb52977",
+                        "status": 1
+                    },
+                    {
+                        "active": true,
+                        "nomeOriginal": "Comprovante de Leitura de Expediente.pdf",
+                        "id": 1977978,
+                        "url": "/download?d\u003d580da055-acde-42d3-8f0f-b1b25b834620",
+                        "status": 1
+                    }
+                ],
+                "id": 32740,
+                "idServicoRealizado": 236343,
+                "status": 1
+            },
+            {
+                "processos": [
+                    {
+                        "id": 0
+                    }
+                ],
+                "respostas": [],
+                "idExpedPai": 0,
+                "data": "2025-12-01",
+                "active": true,
+                "expedDests": [
+                    {
+                        "agente": {
+                            "idDepartamento": 0,
+                            "active": true,
+                            "departamento": {
+                                "id": 0
+                            },
+                            "id": 37104,
+                            "descricao": "SANTANA E CIA HOME CENTER LTDA",
+                            "status": 1
+                        },
+                        "expedGrupo": {
+                            "id": 0
+                        },
+                        "idExpedGrupo": 0,
+                        "active": true,
+                        "idAgente": 37104,
+                        "idAgenteAutor": 914044,
+                        "isOculto": false,
+                        "idDepartamento": 0,
+                        "idExped": 61695,
+                        "dataLeitura": "2025-12-01 16:12:37",
+                        "departamento": {
+                            "id": 0
+                        },
+                        "id": 68041,
+                        "dataCadastro": "2025-12-01 11:28:25",
+                        "isCopia": false,
+                        "status": 1
+                    }
+                ],
+                "expedEmits": [
+                    {
+                        "agente": {
+                            "idDepartamento": 182,
+                            "active": true,
+                            "departamento": {
+                                "active": true,
+                                "id": 182,
+                                "descricao": "Subchefia de Cobrança",
+                                "status": 1
+                            },
+                            "id": 914044,
+                            "descricao": "CARLOS DE SOUSA LIMA FILHO",
+                            "status": 1
+                        },
+                        "idExped": 61695,
+                        "active": true,
+                        "id": 66185,
+                        "idAgente": 914044,
+                        "dataCadastro": "2025-12-01 11:28:25",
+                        "status": 1
+                    }
+                ],
+                "descricao": "16619412001035",
+                "idEfiscOpConHono": 0,
+                "servicoRealizado": {
+                    "documentos": [
+                        {
+                            "active": true,
+                            "nomeOriginal": "Mensagem.pdf",
+                            "id": 3152267,
+                            "url": "download?d\u003d964d1535-4f3e-4b77-a841-24ede52fd41a",
+                            "status": 1
+                        }
+                    ],
+                    "active": true,
+                    "id": 359241,
+                    "atoNumero": "182/1/1.812/6925/2025",
+                    "status": 2
+                },
+                "assunto": "COMUNICADO - OPORTUNIDADE DE REGULARIZAÇÃO DE DÉBITOS",
+                "documentos": [
+                    {
+                        "active": true,
+                        "nomeOriginal": "Comprovante de Envio de Notificação.pdf",
+                        "id": 3152286,
+                        "url": "/download?d\u003dff7e4ffe-f457-4c3a-a5dd-108095e29c88",
+                        "status": 1
+                    },
+                    {
+                        "active": true,
+                        "nomeOriginal": "Comprovante de Leitura de Expediente.pdf",
+                        "id": 3153419,
+                        "url": "/download?d\u003d2f8258c7-4c9a-49a9-965d-1f37223eebfe",
+                        "status": 1
+                    }
+                ],
+                "id": 61695,
+                "idServicoRealizado": 359241,
+                "status": 1
+            },
+            {
+                "processos": [
+                    {
+                        "id": 0
+                    }
+                ],
+                "respostas": [
+                    {
+                        "idExpedPai": 37083,
+                        "data": "2024-07-05",
+                        "active": true,
+                        "expedDests": [
+                            {
+                                "agente": {
+                                    "idDepartamento": 322,
+                                    "active": true,
+                                    "departamento": {
+                                        "active": true,
+                                        "id": 322,
+                                        "descricao": "Gerência de Gestão das Informações Econômico-Fiscais ",
+                                        "status": 1
+                                    },
+                                    "id": 730267,
+                                    "descricao": "NEWTON OLIVEIRA MAGALHAES",
+                                    "status": 1
+                                },
+                                "expedGrupo": {
+                                    "id": 0
+                                },
+                                "idExpedGrupo": 0,
+                                "active": true,
+                                "idAgente": 730267,
+                                "idAgenteAutor": 37108,
+                                "isOculto": false,
+                                "idDepartamento": 0,
+                                "idExped": 37388,
+                                "departamento": {
+                                    "id": 0
+                                },
+                                "id": 37659,
+                                "dataCadastro": "2024-07-05 09:21:53",
+                                "isCopia": false,
+                                "status": 1
+                            }
+                        ],
+                        "expedEmits": [
+                            {
+                                "agente": {
+                                    "idDepartamento": 0,
+                                    "active": true,
+                                    "departamento": {
+                                        "id": 0
+                                    },
+                                    "id": 37108,
+                                    "descricao": "SANTANA E CIA HOME CENTER LTDA",
+                                    "status": 1
+                                },
+                                "idExped": 37388,
+                                "active": true,
+                                "id": 36455,
+                                "idAgente": 37108,
+                                "dataCadastro": "2024-07-05 09:21:53",
+                                "status": 1
+                            }
+                        ],
+                        "descricao": "COBRANÇA ¿ ICMS NORMAL DECLARADO NO SPED\n",
+                        "idEfiscOpConHono": 0,
+                        "servicoRealizado": {
+                            "documentos": [
+                                {
+                                    "active": true,
+                                    "nomeOriginal": "PEDIDO DE PRORROGAÇÃO- NOTIFICACAO 521.pdf",
+                                    "id": 2319949,
+                                    "url": "download?d\u003d12f385b8-f53c-4414-a9f6-50977575e2fd",
+                                    "status": 1
+                                }
+                            ],
+                            "active": true,
+                            "id": 264941,
+                            "status": 2
+                        },
+                        "assunto": "NOTIFICAÇÃO Nº 521/2024 - SEFAZ",
+                        "documentos": [],
+                        "id": 37388,
+                        "idServicoRealizado": 264941,
+                        "status": 1
+                    }
+                ],
+                "idExpedPai": 0,
+                "data": "2024-06-25",
+                "active": true,
+                "expedDests": [
+                    {
+                        "agente": {
+                            "idDepartamento": 0,
+                            "active": true,
+                            "departamento": {
+                                "id": 0
+                            },
+                            "id": 37104,
+                            "descricao": "SANTANA E CIA HOME CENTER LTDA",
+                            "status": 1
+                        },
+                        "expedGrupo": {
+                            "id": 0
+                        },
+                        "idExpedGrupo": 0,
+                        "active": true,
+                        "idAgente": 37104,
+                        "idAgenteAutor": 730267,
+                        "isOculto": false,
+                        "idDepartamento": 0,
+                        "idExped": 37083,
+                        "dataLeitura": "2024-06-28 15:35:53",
+                        "departamento": {
+                            "id": 0
+                        },
+                        "id": 37320,
+                        "dataCadastro": "2024-06-25 14:10:31",
+                        "isCopia": false,
+                        "status": 1
+                    }
+                ],
+                "expedEmits": [
+                    {
+                        "agente": {
+                            "idDepartamento": 322,
+                            "active": true,
+                            "departamento": {
+                                "active": true,
+                                "id": 322,
+                                "descricao": "Gerência de Gestão das Informações Econômico-Fiscais ",
+                                "status": 1
+                            },
+                            "id": 730267,
+                            "descricao": "NEWTON OLIVEIRA MAGALHAES",
+                            "status": 1
+                        },
+                        "idExped": 37083,
+                        "active": true,
+                        "id": 36136,
+                        "idAgente": 730267,
+                        "dataCadastro": "2024-06-25 14:10:31",
+                        "status": 1
+                    }
+                ],
+                "descricao": "COBRANÇA ¿ ICMS NORMAL DECLARADO NO SPED\n",
+                "idEfiscOpConHono": 0,
+                "servicoRealizado": {
+                    "documentos": [
+                        {
+                            "active": true,
+                            "nomeOriginal": "521.pdf",
+                            "id": 2294897,
+                            "url": "download?d\u003d263408e9-a31d-41c1-bed3-20805725a61a",
+                            "status": 1
+                        }
+                    ],
+                    "active": true,
+                    "id": 263296,
+                    "atoNumero": "322/1/1.812/3327/2024",
+                    "status": 2
+                },
+                "assunto": "NOTIFICAÇÃO Nº 521/2024 - SEFAZ",
+                "documentos": [
+                    {
+                        "active": true,
+                        "nomeOriginal": "ANEXO 521.pdf",
+                        "id": 2294904,
+                        "url": "download?d\u003de1943c89-91a0-4e4a-becb-a56c58904762",
+                        "status": 1
+                    },
+                    {
+                        "active": true,
+                        "nomeOriginal": "Comprovante de Envio de Notificação.pdf",
+                        "id": 2294909,
+                        "url": "/download?d\u003d975bb4fa-332b-4c62-93f5-15cff7ae2856",
+                        "status": 1
+                    },
+                    {
+                        "active": true,
+                        "nomeOriginal": "Comprovante de Leitura de Expediente.pdf",
+                        "id": 2306055,
+                        "url": "/download?d\u003d4f88994c-20ee-445d-8436-fd6c28aa7ae4",
+                        "status": 1
+                    },
+                    {
+                        "active": true,
+                        "nomeOriginal": "Comprovante de Protocolo de Resposta a Notificação.pdf",
+                        "id": 2319956,
+                        "url": "/download?d\u003d7ddcd271-34e2-43e9-b3bc-4790a2a6d8ae",
+                        "status": 1
+                    },
+                    {
+                        "active": true,
+                        "nomeOriginal": "PEDIDO DE PRORROGAÇÃO- NOTIFICACAO 521.pdf",
+                        "id": 2319949,
+                        "url": "download?d\u003d12f385b8-f53c-4414-a9f6-50977575e2fd",
+                        "status": 1
+                    }
+                ],
+                "id": 37083,
+                "idServicoRealizado": 263296,
+                "status": 1
+            },
+            {
+                "processos": [
+                    {
+                        "id": 0
+                    }
+                ],
+                "respostas": [],
+                "idExpedPai": 0,
+                "data": "2025-05-13",
+                "active": true,
+                "expedDests": [
+                    {
+                        "agente": {
+                            "idDepartamento": 0,
+                            "active": true,
+                            "departamento": {
+                                "id": 0
+                            },
+                            "id": 37104,
+                            "descricao": "SANTANA E CIA HOME CENTER LTDA",
+                            "status": 1
+                        },
+                        "expedGrupo": {
+                            "id": 0
+                        },
+                        "idExpedGrupo": 0,
+                        "active": true,
+                        "idAgente": 37104,
+                        "idAgenteAutor": 914063,
+                        "isOculto": false,
+                        "idDepartamento": 0,
+                        "idExped": 54710,
+                        "dataLeitura": "2025-05-26 14:58:40",
+                        "departamento": {
+                            "id": 0
+                        },
+                        "id": 59999,
+                        "dataCadastro": "2025-05-13 16:23:51",
+                        "isCopia": false,
+                        "status": 1
+                    }
+                ],
+                "expedEmits": [
+                    {
+                        "agente": {
+                            "idDepartamento": 182,
+                            "active": true,
+                            "departamento": {
+                                "active": true,
+                                "id": 182,
+                                "descricao": "Subchefia de Cobrança",
+                                "status": 1
+                            },
+                            "id": 914063,
+                            "descricao": "YKARO OLIVEIRA MARIANO",
+                            "status": 1
+                        },
+                        "idExped": 54710,
+                        "active": true,
+                        "id": 58989,
+                        "idAgente": 914063,
+                        "dataCadastro": "2025-05-13 16:23:51",
+                        "status": 1
+                    }
+                ],
+                "descricao": "16619412001035",
+                "idEfiscOpConHono": 0,
+                "servicoRealizado": {
+                    "documentos": [
+                        {
+                            "active": true,
+                            "nomeOriginal": "Mensagem Contumazes Nova.pdf",
+                            "id": 2898096,
+                            "url": "download?d\u003dea719a88-7eaf-493a-a256-76afd3002e8c",
+                            "status": 1
+                        }
+                    ],
+                    "active": true,
+                    "id": 327597,
+                    "atoNumero": "182/1/1.812/1671/2025",
+                    "status": 2
+                },
+                "assunto": "NOTIFICAÇÃO SEFAZ - REGULARIZAÇÃO DE DÉBITOS",
+                "documentos": [
+                    {
+                        "active": true,
+                        "nomeOriginal": "Comprovante de Envio de Notificação.pdf",
+                        "id": 2898099,
+                        "url": "/download?d\u003d07379760-41f5-48ad-b2f0-ff79af25c057",
+                        "status": 1
+                    },
+                    {
+                        "active": true,
+                        "nomeOriginal": "Comprovante de Leitura de Expediente.pdf",
+                        "id": 2909486,
+                        "url": "/download?d\u003ddd1e0041-8416-485e-8d6e-53da88942cbe",
+                        "status": 1
+                    }
+                ],
+                "id": 54710,
+                "idServicoRealizado": 327597,
+                "status": 1
+            },
+            {
+                "processos": [
+                    {
+                        "id": 0
+                    }
+                ],
+                "respostas": [],
+                "idExpedPai": 0,
+                "data": "2026-01-28",
+                "active": true,
+                "expedDests": [
+                    {
+                        "agente": {
+                            "idDepartamento": 0,
+                            "active": true,
+                            "departamento": {
+                                "id": 0
+                            },
+                            "id": 37104,
+                            "descricao": "SANTANA E CIA HOME CENTER LTDA",
+                            "status": 1
+                        },
+                        "expedGrupo": {
+                            "id": 0
+                        },
+                        "idExpedGrupo": 0,
+                        "active": true,
+                        "idAgente": 37104,
+                        "idAgenteAutor": 727633,
+                        "isOculto": false,
+                        "idDepartamento": 0,
+                        "idExped": 66720,
+                        "dataLeitura": "2026-02-09 09:56:20",
+                        "departamento": {
+                            "id": 0
+                        },
+                        "id": 73125,
+                        "dataCadastro": "2026-01-28 09:30:53",
+                        "isCopia": false,
+                        "status": 1
+                    }
+                ],
+                "expedEmits": [
+                    {
+                        "agente": {
+                            "idDepartamento": 341,
+                            "active": true,
+                            "departamento": {
+                                "active": true,
+                                "id": 341,
+                                "descricao": "Gerência de Fiscalização de Estabelecimentos e Outros Impostos ",
+                                "status": 1
+                            },
+                            "id": 727633,
+                            "descricao": "NILTON ANTONIO FERREIRA MEDEIROS",
+                            "status": 1
+                        },
+                        "idExped": 66720,
+                        "active": true,
+                        "id": 71050,
+                        "idAgente": 727633,
+                        "dataCadastro": "2026-01-28 09:30:53",
+                        "status": 1
+                    }
+                ],
+                "descricao": "NOTIFICAÇÃO Nº 239/2026\nCNPJ: 16619412001035",
+                "idEfiscOpConHono": 0,
+                "servicoRealizado": {
+                    "documentos": [
+                        {
+                            "active": true,
+                            "nomeOriginal": "039.pdf",
+                            "id": 3228971,
+                            "url": "download?d\u003d60dfc8c8-4ac4-4a8b-879b-231c8cc8f8ea",
+                            "status": 1
+                        }
+                    ],
+                    "active": true,
+                    "id": 371060,
+                    "atoNumero": "341/1/1.812/1809/2026",
+                    "status": 2
+                },
+                "assunto": "NOTIFICAÇÃO Nº 239/2026 - SEFAZ ¿ COBRANÇA ¿ ICMS NORMAL DECLARADO NO SPED",
+                "documentos": [
+                    {
+                        "active": true,
+                        "nomeOriginal": "239.pdf",
+                        "id": 3228970,
+                        "url": "download?d\u003d46981c26-1db3-4d24-b41c-fc65e9a99195",
+                        "status": 1
+                    },
+                    {
+                        "active": true,
+                        "nomeOriginal": "Comprovante de Envio de Notificação.pdf",
+                        "id": 3228975,
+                        "url": "/download?d\u003d4e5d392d-aecc-406a-a2c7-061b459a1e7b",
+                        "status": 1
+                    },
+                    {
+                        "active": true,
+                        "nomeOriginal": "Comprovante de Leitura de Expediente.pdf",
+                        "id": 3239393,
+                        "url": "/download?d\u003d9eb219fe-dc7c-4441-a934-00d675861c0e",
+                        "status": 1
+                    }
+                ],
+                "id": 66720,
+                "idServicoRealizado": 371060,
+                "status": 1
+            }
+        ],
+        "totalRows": 9,
+        "totalPages": 1,
+        "currentPageRows": 9,
+        "currentPage": 1
+    }
+}
