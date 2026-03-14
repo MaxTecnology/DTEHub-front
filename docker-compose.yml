@@ -8,6 +8,6 @@ services:
         VITE_APP_NAME: ${VITE_APP_NAME:-G2A Soluções Contábeis}
         VITE_APP_LOGO_LIGHT: ${VITE_APP_LOGO_LIGHT:-}
         VITE_APP_LOGO_DARK: ${VITE_APP_LOGO_DARK:-}
-    ports:
-      - "${PORT:-3080}:80"
+    expose:
+      - "80"
     restart: unless-stopped
