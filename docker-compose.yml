@@ -8,6 +8,10 @@ services:
         VITE_APP_NAME: ${VITE_APP_NAME:-G2A Soluções Contábeis}
         VITE_APP_LOGO_LIGHT: ${VITE_APP_LOGO_LIGHT:-}
         VITE_APP_LOGO_DARK: ${VITE_APP_LOGO_DARK:-}
-    expose:
-      - "80"
+    networks:
+      - dokploy-network
     restart: unless-stopped
+
+networks:
+  dokploy-network:
+    external: true
