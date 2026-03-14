@@ -58,7 +58,7 @@ export default function LoginPage() {
       <div className="w-full max-w-sm space-y-6 px-4">
         <div className="flex flex-col items-center gap-3">
           <img src={logoSrc} alt={appConfig.name} className="h-14" />
-          <p className="text-sm text-muted-foreground">DTE Console</p>
+          <p className="text-sm text-muted-foreground">Hub DTE</p>
         </div>
 
         <Form {...form}>
