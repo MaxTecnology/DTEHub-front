@@ -9,5 +9,5 @@ services:
         VITE_APP_LOGO_LIGHT: ${VITE_APP_LOGO_LIGHT:-}
         VITE_APP_LOGO_DARK: ${VITE_APP_LOGO_DARK:-}
     ports:
-      - "${PORT:-80}:80"
+      - "${PORT:-3080}:80"
     restart: unless-stopped
