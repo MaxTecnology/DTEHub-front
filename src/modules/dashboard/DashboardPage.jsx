@@ -59,17 +59,23 @@ export default function DashboardPage() {
   const unread = dashboard?.messages?.unread ?? 0
 
   return (
-    <div className="flex flex-col gap-6 p-6">
-      <div className="flex items-center justify-between">
+    <div className="flex flex-col gap-6 p-4 sm:p-6">
+      <div className="flex items-center justify-between gap-3">
         <h1 className="text-xl font-semibold">Dashboard</h1>
         {canSync && (
           <Button
             onClick={() => syncMutation.mutate()}
             disabled={syncMutation.isPending}
             size="sm"
+            className="shrink-0"
           >
             <RefreshCw className={cn('h-4 w-4 mr-2', syncMutation.isPending && 'animate-spin')} />
-            {syncMutation.isPending ? 'Sincronizando...' : 'Sincronizar agora'}
+            <span className="hidden sm:inline">
+              {syncMutation.isPending ? 'Sincronizando...' : 'Sincronizar agora'}
+            </span>
+            <span className="sm:hidden">
+              {syncMutation.isPending ? '...' : 'Sync'}
+            </span>
           </Button>
         )}
       </div>

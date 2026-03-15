@@ -68,7 +68,7 @@ export default function MessageDetailPage() {
   const documents = message?.documents ?? []
 
   return (
-    <div className="flex flex-col gap-6 p-6 max-w-4xl">
+    <div className="flex flex-col gap-6 p-4 sm:p-6 max-w-4xl mx-auto w-full">
       {/* Voltar */}
       <div>
         <Button
@@ -105,15 +105,15 @@ export default function MessageDetailPage() {
               <Skeleton className="h-4 w-44" data-testid="skeleton" />
             </div>
           ) : (
-            <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 text-sm">
-              <dt className="flex items-center gap-1.5 text-muted-foreground whitespace-nowrap">
+            <dl className="grid grid-cols-1 gap-y-2 text-sm sm:grid-cols-[auto_1fr] sm:gap-x-4">
+              <dt className="flex items-center gap-1.5 text-muted-foreground whitespace-nowrap sm:mt-0 -mb-1 sm:mb-0">
                 <Calendar className="h-3.5 w-3.5" /> Enviado
               </dt>
               <dd className="font-medium">{formatDate(message?.messageDate)}</dd>
 
               {message?.readAt && (
                 <>
-                  <dt className="flex items-center gap-1.5 text-muted-foreground whitespace-nowrap">
+                  <dt className="flex items-center gap-1.5 text-muted-foreground whitespace-nowrap sm:mt-0 -mb-1 sm:mb-0">
                     <Calendar className="h-3.5 w-3.5" /> Lido em
                   </dt>
                   <dd>{formatDate(message.readAt)}</dd>
@@ -122,7 +122,7 @@ export default function MessageDetailPage() {
 
               {remetente && (
                 <>
-                  <dt className="flex items-center gap-1.5 text-muted-foreground whitespace-nowrap">
+                  <dt className="flex items-center gap-1.5 text-muted-foreground whitespace-nowrap sm:mt-0 -mb-1 sm:mb-0">
                     <User className="h-3.5 w-3.5" /> De
                   </dt>
                   <dd>
@@ -136,7 +136,7 @@ export default function MessageDetailPage() {
 
               {destinatario && (
                 <>
-                  <dt className="flex items-center gap-1.5 text-muted-foreground whitespace-nowrap">
+                  <dt className="flex items-center gap-1.5 text-muted-foreground whitespace-nowrap sm:mt-0 -mb-1 sm:mb-0">
                     <User className="h-3.5 w-3.5" /> Para
                   </dt>
                   <dd>{destinatario}</dd>
@@ -145,7 +145,7 @@ export default function MessageDetailPage() {
 
               {atoNumero && (
                 <>
-                  <dt className="flex items-center gap-1.5 text-muted-foreground whitespace-nowrap">
+                  <dt className="flex items-center gap-1.5 text-muted-foreground whitespace-nowrap sm:mt-0 -mb-1 sm:mb-0">
                     <Hash className="h-3.5 w-3.5" /> Ato nº
                   </dt>
                   <dd className="font-mono text-xs">{atoNumero}</dd>

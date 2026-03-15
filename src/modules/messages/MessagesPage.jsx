@@ -109,62 +109,70 @@ export default function MessagesPage() {
         ))}
       </div>
 
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Assunto</TableHead>
-            <TableHead>Estado</TableHead>
-            <TableHead>Data</TableHead>
-            <TableHead>Documentos</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {isLoading ? (
-            Array.from({ length: 4 }).map((_, i) => (
-              <TableRow key={i}>
-                <TableCell><Skeleton className="h-4 w-48" data-testid="skeleton" /></TableCell>
-                <TableCell><Skeleton className="h-4 w-20" data-testid="skeleton" /></TableCell>
-                <TableCell><Skeleton className="h-4 w-28" data-testid="skeleton" /></TableCell>
-                <TableCell><Skeleton className="h-4 w-8" data-testid="skeleton" /></TableCell>
-              </TableRow>
-            ))
-          ) : messages.length === 0 ? (
+      <div className="overflow-x-auto rounded-md border">
+        <Table>
+          <TableHeader>
             <TableRow>
-              <TableCell colSpan={4} className="text-center text-muted-foreground py-8">
-                Nenhuma mensagem encontrada.
-              </TableCell>
+              <TableHead>Assunto</TableHead>
+              <TableHead className="hidden sm:table-cell">Estado</TableHead>
+              <TableHead className="hidden sm:table-cell">Data</TableHead>
+              <TableHead className="hidden md:table-cell">Docs</TableHead>
             </TableRow>
-          ) : (
-            messages.map((msg) => (
-              <TableRow
-                key={msg.messageId}
-                data-testid="message-row"
-                data-read-state={msg.readState}
-                className={cn(
-                  'cursor-pointer',
-                  msg.readState === 'nao_lida'
-                    ? 'bg-blue-50 hover:bg-blue-100 font-medium border-l-2 border-l-blue-500'
-                    : 'hover:bg-muted/50'
-                )}
-                onClick={() =>
-                  navigate(`/companies/${contratoId}/messages/${msg.messageId}`, { state: { company } })
-                }
-              >
-                <TableCell>{msg.assunto}</TableCell>
-                <TableCell>
-                  <ReadStateBadge state={msg.readState} />
-                </TableCell>
-                <TableCell className="text-muted-foreground text-sm">
-                  {formatDate(msg.messageDate)}
-                </TableCell>
-                <TableCell className="text-muted-foreground text-sm">
-                  {msg.documentsCount ?? 0}
+          </TableHeader>
+          <TableBody>
+            {isLoading ? (
+              Array.from({ length: 4 }).map((_, i) => (
+                <TableRow key={i}>
+                  <TableCell><Skeleton className="h-4 w-48" data-testid="skeleton" /></TableCell>
+                  <TableCell className="hidden sm:table-cell"><Skeleton className="h-4 w-20" data-testid="skeleton" /></TableCell>
+                  <TableCell className="hidden sm:table-cell"><Skeleton className="h-4 w-28" data-testid="skeleton" /></TableCell>
+                  <TableCell className="hidden md:table-cell"><Skeleton className="h-4 w-8" data-testid="skeleton" /></TableCell>
+                </TableRow>
+              ))
+            ) : messages.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={4} className="text-center text-muted-foreground py-8">
+                  Nenhuma mensagem encontrada.
                 </TableCell>
               </TableRow>
-            ))
-          )}
-        </TableBody>
-      </Table>
+            ) : (
+              messages.map((msg) => (
+                <TableRow
+                  key={msg.messageId}
+                  data-testid="message-row"
+                  data-read-state={msg.readState}
+                  className={cn(
+                    'cursor-pointer',
+                    msg.readState === 'nao_lida'
+                      ? 'bg-blue-50 hover:bg-blue-100 font-medium border-l-2 border-l-blue-500'
+                      : 'hover:bg-muted/50'
+                  )}
+                  onClick={() =>
+                    navigate(`/companies/${contratoId}/messages/${msg.messageId}`, { state: { company } })
+                  }
+                >
+                  <TableCell>
+                    <p className="leading-tight">{msg.assunto}</p>
+                    <p className="text-xs text-muted-foreground mt-0.5 flex items-center gap-2 sm:hidden">
+                      <span>{formatDate(msg.messageDate)}</span>
+                      <ReadStateBadge state={msg.readState} />
+                    </p>
+                  </TableCell>
+                  <TableCell className="hidden sm:table-cell">
+                    <ReadStateBadge state={msg.readState} />
+                  </TableCell>
+                  <TableCell className="hidden sm:table-cell text-muted-foreground text-sm">
+                    {formatDate(msg.messageDate)}
+                  </TableCell>
+                  <TableCell className="hidden md:table-cell text-muted-foreground text-sm">
+                    {msg.documentsCount ?? 0}
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
+          </TableBody>
+        </Table>
+      </div>
 
       {totalPages > 1 && (
         <div className="flex items-center justify-between text-sm text-muted-foreground">

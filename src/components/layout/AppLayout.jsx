@@ -1,4 +1,5 @@
-import { NavLink, Outlet } from 'react-router-dom'
+import { useState } from 'react'
+import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import {
   LayoutDashboard,
   Building2,
@@ -9,6 +10,8 @@ import {
   LogOut,
   Sun,
   Moon,
+  Menu,
+  X,
 } from 'lucide-react'
 import { appConfig } from '@/lib/appConfig'
 import { useAuth } from '@/hooks/useAuth'
@@ -47,13 +50,42 @@ function getInitials(email) {
 export default function AppLayout() {
   const { user, role, signOut } = useAuth()
   const { theme, toggleTheme } = useTheme()
+  const [sidebarOpen, setSidebarOpen] = useState(false)
+
+  function closeSidebar() {
+    setSidebarOpen(false)
+  }
 
   return (
     <div className="flex min-h-screen">
+      {/* Overlay mobile */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 z-40 bg-black/50 md:hidden"
+          onClick={closeSidebar}
+          aria-hidden="true"
+        />
+      )}
+
       {/* Sidebar */}
-      <aside className="flex w-56 flex-shrink-0 flex-col border-r bg-sidebar">
-        <div className="flex h-14 items-center px-5">
+      <aside
+        className={cn(
+          'fixed inset-y-0 left-0 z-50 flex w-56 flex-shrink-0 flex-col border-r bg-sidebar',
+          'transition-transform duration-200 ease-in-out',
+          'md:static md:translate-x-0',
+          sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+        )}
+      >
+        {/* Logo + botao fechar (mobile) */}
+        <div className="flex h-14 items-center justify-between px-5">
           <img src={appConfig.logoDark} alt={appConfig.name} className="h-7" />
+          <button
+            onClick={closeSidebar}
+            className="rounded-md p-1 text-sidebar-foreground/50 hover:text-sidebar-foreground md:hidden"
+            aria-label="Fechar menu"
+          >
+            <X className="h-4 w-4" />
+          </button>
         </div>
 
         <Separator className="bg-sidebar-border" />
@@ -62,7 +94,7 @@ export default function AppLayout() {
           {navItems
             .filter((item) => hasRole(role, item.minRole))
             .map((item) => (
-              <SidebarLink key={item.to} {...item} />
+              <SidebarLink key={item.to} {...item} onNavigate={closeSidebar} />
             ))}
 
           {hasRole(role, 'admin') && (
@@ -73,7 +105,7 @@ export default function AppLayout() {
                 </p>
               </div>
               {adminItems.map((item) => (
-                <SidebarLink key={item.to} {...item} />
+                <SidebarLink key={item.to} {...item} onNavigate={closeSidebar} />
               ))}
             </>
           )}
@@ -114,17 +146,32 @@ export default function AppLayout() {
       </aside>
 
       {/* Conteudo principal */}
-      <main className="flex-1 overflow-auto">
-        <Outlet />
-      </main>
+      <div className="flex min-w-0 flex-1 flex-col">
+        {/* Top bar mobile */}
+        <div className="flex h-14 items-center border-b bg-sidebar px-4 md:hidden">
+          <button
+            onClick={() => setSidebarOpen(true)}
+            className="rounded-md p-1.5 text-sidebar-foreground/70 hover:text-sidebar-foreground"
+            aria-label="Abrir menu"
+          >
+            <Menu className="h-5 w-5" />
+          </button>
+          <img src={appConfig.logoDark} alt={appConfig.name} className="h-6 ml-3" />
+        </div>
+
+        <main className="flex-1 overflow-auto">
+          <Outlet />
+        </main>
+      </div>
     </div>
   )
 }
 
-function SidebarLink({ to, label, icon: Icon }) {
+function SidebarLink({ to, label, icon: Icon, onNavigate }) {
   return (
     <NavLink
       to={to}
+      onClick={onNavigate}
       className={({ isActive }) =>
         cn(
           'flex items-center gap-2.5 rounded-md px-2 py-2 text-sm transition-colors',

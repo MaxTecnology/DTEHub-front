@@ -63,92 +63,100 @@ export default function CompaniesPage() {
         </Button>
       </div>
 
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Empresa</TableHead>
-            <TableHead>CNPJ</TableHead>
-            <TableHead>Insc. Estadual</TableHead>
-            <TableHead>Contrato ID</TableHead>
-            <TableHead className="text-center">Não lidas</TableHead>
-            <TableHead className="w-32" />
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {isLoading ? (
-            Array.from({ length: 4 }).map((_, i) => (
-              <TableRow key={i}>
-                <TableCell>
-                  <Skeleton className="h-4 w-48" data-testid="skeleton" />
-                </TableCell>
-                <TableCell>
-                  <Skeleton className="h-4 w-36" data-testid="skeleton" />
-                </TableCell>
-                <TableCell>
-                  <Skeleton className="h-4 w-24" data-testid="skeleton" />
-                </TableCell>
-                <TableCell>
-                  <Skeleton className="h-4 w-20" data-testid="skeleton" />
-                </TableCell>
-                <TableCell>
-                  <Skeleton className="h-4 w-8 mx-auto" data-testid="skeleton" />
-                </TableCell>
-                <TableCell />
-              </TableRow>
-            ))
-          ) : companies.length === 0 ? (
+      <div className="overflow-x-auto rounded-md border">
+        <Table>
+          <TableHeader>
             <TableRow>
-              <TableCell colSpan={6} className="text-center text-muted-foreground py-8">
-                Nenhuma empresa encontrada.
-              </TableCell>
+              <TableHead>Empresa</TableHead>
+              <TableHead className="hidden sm:table-cell">CNPJ</TableHead>
+              <TableHead className="hidden md:table-cell">Insc. Estadual</TableHead>
+              <TableHead className="hidden lg:table-cell">Contrato ID</TableHead>
+              <TableHead className="text-center">Não lidas</TableHead>
+              <TableHead className="w-10 sm:w-32" />
             </TableRow>
-          ) : (
-            companies.map((company) => (
-              <TableRow
-                key={company.contratoId}
-                data-testid="company-row"
-                className="cursor-pointer hover:bg-muted/50"
-                onClick={() => navigate(`/companies/${company.contratoId}/messages`, { state: { company } })}
-              >
-                <TableCell className="font-medium">{company.descricao}</TableCell>
-                <TableCell className="text-muted-foreground text-sm font-mono">
-                  {formatCNPJ(company.documento)}
-                </TableCell>
-                <TableCell className="text-muted-foreground text-sm font-mono">
-                  {company.inscricaoCompleta ?? '—'}
-                </TableCell>
-                <TableCell className="text-muted-foreground text-sm font-mono">
-                  {company.contratoId}
-                </TableCell>
-                <TableCell className="text-center">
-                  {company.unreadMessages > 0 ? (
-                    <Badge
-                      className="bg-blue-600 text-white hover:bg-blue-700"
-                      data-testid="unread-count-badge"
-                    >
-                      {company.unreadMessages}
-                    </Badge>
-                  ) : (
-                    <span className="text-muted-foreground text-sm">—</span>
-                  )}
-                </TableCell>
-                <TableCell>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      navigate(`/companies/${company.contratoId}/messages`, { state: { company } })
-                    }}
-                  >
-                    Ver mensagens
-                  </Button>
+          </TableHeader>
+          <TableBody>
+            {isLoading ? (
+              Array.from({ length: 4 }).map((_, i) => (
+                <TableRow key={i}>
+                  <TableCell>
+                    <Skeleton className="h-4 w-48" data-testid="skeleton" />
+                  </TableCell>
+                  <TableCell className="hidden sm:table-cell">
+                    <Skeleton className="h-4 w-36" data-testid="skeleton" />
+                  </TableCell>
+                  <TableCell className="hidden md:table-cell">
+                    <Skeleton className="h-4 w-24" data-testid="skeleton" />
+                  </TableCell>
+                  <TableCell className="hidden lg:table-cell">
+                    <Skeleton className="h-4 w-20" data-testid="skeleton" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-4 w-8 mx-auto" data-testid="skeleton" />
+                  </TableCell>
+                  <TableCell />
+                </TableRow>
+              ))
+            ) : companies.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={6} className="text-center text-muted-foreground py-8">
+                  Nenhuma empresa encontrada.
                 </TableCell>
               </TableRow>
-            ))
-          )}
-        </TableBody>
-      </Table>
+            ) : (
+              companies.map((company) => (
+                <TableRow
+                  key={company.contratoId}
+                  data-testid="company-row"
+                  className="cursor-pointer hover:bg-muted/50"
+                  onClick={() => navigate(`/companies/${company.contratoId}/messages`, { state: { company } })}
+                >
+                  <TableCell>
+                    <p className="font-medium leading-tight">{company.descricao}</p>
+                    <p className="text-xs text-muted-foreground font-mono mt-0.5 sm:hidden">
+                      {formatCNPJ(company.documento)}
+                    </p>
+                  </TableCell>
+                  <TableCell className="hidden sm:table-cell text-muted-foreground text-sm font-mono">
+                    {formatCNPJ(company.documento)}
+                  </TableCell>
+                  <TableCell className="hidden md:table-cell text-muted-foreground text-sm font-mono">
+                    {company.inscricaoCompleta ?? '—'}
+                  </TableCell>
+                  <TableCell className="hidden lg:table-cell text-muted-foreground text-sm font-mono">
+                    {company.contratoId}
+                  </TableCell>
+                  <TableCell className="text-center">
+                    {company.unreadMessages > 0 ? (
+                      <Badge
+                        className="bg-blue-600 text-white hover:bg-blue-700"
+                        data-testid="unread-count-badge"
+                      >
+                        {company.unreadMessages}
+                      </Badge>
+                    ) : (
+                      <span className="text-muted-foreground text-sm">—</span>
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="hidden sm:inline-flex"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        navigate(`/companies/${company.contratoId}/messages`, { state: { company } })
+                      }}
+                    >
+                      Ver mensagens
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
+          </TableBody>
+        </Table>
+      </div>
 
       {totalPages > 1 && (
         <div className="flex items-center justify-between text-sm text-muted-foreground">
