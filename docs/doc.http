@@ -1,25 +1,30 @@
-@baseUrl = http://127.0.0.1:3333
+# @baseUrl = http://127.0.0.1:3333
+@baseUrl = https://hubdteapi.g2asolucoescontabeis.com.br
 @apiToken = ewEG5tbqkx4eoggUUTTqVO1vt2I6dBaCDSdhsYpKdd0Fofl06hfS98KOCWYDP5Pc
-@contratoId = 347215
-@messageId = 68309
-@documentoId = 3263106
+@contratoId = 701240
+@messageId = 69045
+@documentoId = 3278222
 @jobId = 8d278d34-8d58-46db-a88b-a5bf52fad2c8
 @page = 1
 @pageSize = 20
 @certificateId = ad795679-68d9-460e-8913-3e13609231e3
 @certLabel = cert-prod-cliente-01
 @certPassword = A12345
-@userId = 00000000-0000-0000-0000-000000000000
-@userEmail = admin@cliente.local
-@userPassword = 12345678
+@userId = aa5d2ea3-f84a-405a-b129-e9e0c15f21eb
+@userEmail = dti@g2asolucoescontabeis.cnt.br
+@userPassword = Password@12
 @userAccessToken = cole-o-token-aqui
+@alertChannelId = 7906f543-55f2-467e-8496-229bb44c4602
+@n8nWebhookUrl = https://flows.g2asolucoescontabeis.com.br/webhook/dte-alerts
+@n8nWebhookToken = 7f4c9b18f0b24d5a9b67a1d83e4a6c91
+@n8nWebhookSecret = c8b2d5e4a1f8b6c9d2e7a4f1b0c6e3d8a5f2b1c4d7e9f6a3b8c1d5e7f298ab4
 
 ### Ordem recomendada para uso:
 ### 1) Health da API
 ### 2) Auth status
 ### 3) Auth refresh (quando nao autenticado)
 ### 4) Sync messages
-### 5) Consultar job ate "completed"
+### 5) Consultar job ate `success` ou `failed`
 ### 6) Consultar companies/messages/events
 
 ### ------------------------------------------------------------
@@ -55,10 +60,10 @@ Content-Type: application/json
 x-api-token: {{apiToken}}
 
 {
-  "email": "admin@admin.com",
+  "email": "dti@g2asolucoescontabeis.com.br",
   "fullName": "Administrador",
   "role": "admin",
-  "password": "Pasword@12",
+  "password": "Password@12",
   "isActive": true
 }
 
@@ -85,7 +90,7 @@ Content-Type: application/json
 x-api-token: {{apiToken}}
 
 {
-  "newPassword": "123456789"
+  "newPassword": "Password@12"
 }
 
 ### Meu usuario com bearer
@@ -231,13 +236,21 @@ x-api-token: {{apiToken}}
   "dryRun": false
 }
 
-### 4) Consultar status do job
+### 4) Listar jobs recentes
+GET {{baseUrl}}/v1/jobs?page={{page}}&pageSize={{pageSize}}
+x-api-token: {{apiToken}}
+
+### 4b) Listar jobs ativos do sync (evita disparo duplicado no front)
+GET {{baseUrl}}/v1/jobs?page={{page}}&pageSize={{pageSize}}&status=pending,running&jobType=sync_messages
+x-api-token: {{apiToken}}
+
+### 5) Consultar status do job
 ### Copie o jobId retornado em data.jobId para a variavel @jobId
 GET {{baseUrl}}/v1/jobs/{{jobId}}
 x-api-token: {{apiToken}}
 
 ### ------------------------------------------------------------
-### CONSULTAS (depois do job completed)
+### CONSULTAS (depois do job success)
 ### ------------------------------------------------------------
 
 ### 5) Lista empresas
@@ -266,31 +279,14 @@ x-api-token: {{apiToken}}
 GET {{baseUrl}}/v1/companies/{{contratoId}}/messages/{{messageId}}/view
 x-api-token: {{apiToken}}
 
-### Metadados do documento e estado de cache no storage
+### Metadados do documento
 GET {{baseUrl}}/v1/companies/{{contratoId}}/messages/{{messageId}}/documents/{{documentoId}}
 x-api-token: {{apiToken}}
 
-### Forcar cache do documento no MinIO (fase 7 base)
-POST {{baseUrl}}/v1/companies/{{contratoId}}/messages/{{messageId}}/documents/{{documentoId}}/cache
-Content-Type: application/json
-x-api-token: {{apiToken}}
-
-{
-  "force": false
-}
-
 ### Download de documento/PDF sem abrir mensagem no portal
 ### 1) pegue documentoId no endpoint /view
-### 2) delivery=proxy streama binario pela API
+### 2) a API busca direto na DTE e streama binario pela propria API
 GET {{baseUrl}}/v1/companies/{{contratoId}}/messages/{{messageId}}/documents/{{documentoId}}/download?delivery=proxy
-x-api-token: {{apiToken}}
-
-### Download por redirect (URL assinada quando storage estiver com objeto)
-GET {{baseUrl}}/v1/companies/{{contratoId}}/messages/{{messageId}}/documents/{{documentoId}}/download?delivery=redirect
-x-api-token: {{apiToken}}
-
-### Download sem auto-cache (retorna 202 se ainda nao estiver no storage)
-GET {{baseUrl}}/v1/companies/{{contratoId}}/messages/{{messageId}}/documents/{{documentoId}}/download?delivery=proxy&autoFetch=false
 x-api-token: {{apiToken}}
 
 ### Download em base64 (debug para clientes que nao salvam binario corretamente)
@@ -308,6 +304,12 @@ x-api-token: {{apiToken}}
 ### ------------------------------------------------------------
 ### ALERTAS
 ### ------------------------------------------------------------
+### Fluxo recomendado para testar n8n:
+### 1) Crie/publice o workflow no n8n
+### 2) Crie um canal webhook apontando para a Production URL do n8n
+### 3) Copie o channelId retornado para @alertChannelId
+### 4) Dispare /v1/alerts/test-delivery
+### 5) Valide a execucao no n8n e depois consulte /v1/alerts/deliveries
 
 ### Listar canais de alerta
 GET {{baseUrl}}/v1/alerts/channels?page={{page}}&pageSize={{pageSize}}
@@ -317,17 +319,40 @@ x-api-token: {{apiToken}}
 GET {{baseUrl}}/v1/alerts/deliveries?page={{page}}&pageSize={{pageSize}}
 x-api-token: {{apiToken}}
 
-### Criar canal webhook (ajuste endpointUrl/secret)
+### Disparar entrega sintetica de alerta para um canal especifico
+POST {{baseUrl}}/v1/alerts/test-delivery
+Content-Type: application/json
+x-api-token: {{apiToken}}
+
+{
+  "channelId": "{{alertChannelId}}",
+  "eventType": "new_unread",
+  "companyName": "DTE TEST COMPANY",
+  "assunto": "Teste manual de alerta via n8n"
+}
+
+### Consultar entregas filtrando por canal
+GET {{baseUrl}}/v1/alerts/deliveries?page={{page}}&pageSize={{pageSize}}&channelId={{alertChannelId}}
+x-api-token: {{apiToken}}
+
+### Configuracao para colar no n8n
+### Header Auth -> Header Name: x-webhook-token
+### Header Auth -> Header Value: {{n8nWebhookToken}}
+### Code node HMAC secret: {{n8nWebhookSecret}}
+### Webhook URL de producao: {{n8nWebhookUrl}}
+
+### Criar canal webhook correto para n8n
 POST {{baseUrl}}/v1/alerts/channels
 Content-Type: application/json
 x-api-token: {{apiToken}}
 
 {
-  "name": "webhook-teste",
-  "endpointUrl": "https://seu-webhook.com/notify",
-  "secret": "seu-segredo",
+  "name": "n8n-dte-v2",
+  "endpointUrl": "{{n8nWebhookUrl}}",
+  "secret": "{{n8nWebhookSecret}}",
   "enabled": true,
   "headersJson": {
+    "x-webhook-token": "{{n8nWebhookToken}}",
     "X-Source": "dte-api"
   },
   "timeoutMs": 10000,
@@ -340,3 +365,8 @@ x-api-token: {{apiToken}}
 
 ### Endpoint protegido sem token (deve retornar 401)
 GET {{baseUrl}}/v1/companies?page=1&pageSize=5
+
+
+
+
+

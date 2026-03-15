@@ -33,7 +33,7 @@
     },
     "/v1/openapi.json": {
       "get": {
-        "summary": "OpenAPI dinâmico da API",
+        "summary": "OpenAPI dinÃ¢mico da API",
         "security": []
       }
     },
@@ -67,6 +67,11 @@
         "summary": "Dispara job de sincronizacao de mensagens"
       }
     },
+    "/v1/jobs": {
+      "get": {
+        "summary": "Lista jobs com paginacao e filtros de status/tipo"
+      }
+    },
     "/v1/jobs/{jobId}": {
       "get": {
         "summary": "Consulta status do job"
@@ -87,3 +92,4 @@
     }
   }
 }
+

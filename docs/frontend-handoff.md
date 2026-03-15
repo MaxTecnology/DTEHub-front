@@ -1,4 +1,4 @@
-﻿# Frontend Handoff - API DTE
+# Frontend Handoff - API DTE
 
 Data base: 12 de marco de 2026.
 Objetivo: entregar para o time/projeto de frontend um pacote claro para implementacao segura e previsivel.
@@ -33,8 +33,8 @@ Motivos:
 4. `docs/fluxo-aplicacao.md`
 5. `docs/fase-09-users-auth.md`
 6. `docs/fase-08-cert-vault.md`
-7. `docs/fase-07-minio-document-cache.md`
-8. `docs/runbook-operacao.md`
+7. `docs/runbook-operacao.md`
+8. `docs/n8n-alerts.md`
 
 ## 4) Regras de seguranca para o frontend
 
@@ -80,14 +80,16 @@ Persistencia recomendada do token:
 6. Documentos
    - `GET /v1/companies/{contratoId}/messages/{messageId}/documents/{documentoId}`
    - `GET /v1/companies/{contratoId}/messages/{messageId}/documents/{documentoId}/download?delivery=proxy`
-   - `GET /v1/companies/{contratoId}/messages/{messageId}/documents/{documentoId}/download?delivery=redirect`
-   - `POST /v1/companies/{contratoId}/messages/{messageId}/documents/{documentoId}/cache`
+   - `GET /v1/companies/{contratoId}/messages/{messageId}/documents/{documentoId}/download?delivery=proxy&format=base64`
 7. Sync
+   - `GET /v1/jobs?status=pending,running&jobType=sync_messages`
    - `POST /v1/sync/messages`
+   - `GET /v1/jobs`
    - `GET /v1/jobs/{jobId}`
 8. Alertas
    - `GET /v1/alerts/channels`
    - `POST /v1/alerts/channels` (admin/owner)
+   - `POST /v1/alerts/test-delivery` (admin/owner)
    - `GET /v1/alerts/deliveries`
 9. Usuarios
    - `GET /v1/users`
@@ -129,11 +131,12 @@ Persistencia recomendada do token:
 
 ## 9) Fluxo de sync no frontend
 
-1. usuario dispara `POST /v1/sync/messages`;
-2. frontend recebe `jobId` com status `pending`;
-3. frontend consulta `GET /v1/jobs/{jobId}` em polling (2-5s);
-4. ao `completed`, recarrega empresas/mensagens;
-5. ao `failed`, exibe `errorMessage` e link para metricas/health.
+1. frontend consulta `GET /v1/jobs?status=pending,running&jobType=sync_messages`;
+2. se houver job ativo, reutiliza esse `jobId`;
+3. se nao houver, usuario dispara `POST /v1/sync/messages`;
+4. frontend consulta `GET /v1/jobs/{jobId}` em polling (2-5s);
+5. ao `success`, recarrega empresas/mensagens;
+6. ao `failed`, exibe `errorMessage` e link para metricas/health.
 
 ## 10) Checklist de entrega do frontend
 
@@ -141,7 +144,7 @@ Persistencia recomendada do token:
 2. implementar guard de role por pagina/acao;
 3. telas principais do MVP funcionando com dados reais;
 4. fluxos de erro (401/403/409/502) tratados;
-5. download de documento validado em `proxy` e `redirect`;
+5. download de documento validado em `proxy`;
 6. fluxo de sync com polling de job validado;
 7. documentacao do frontend com setup e env;
 8. smoke test manual com `docs/doc.http` como referencia.
@@ -154,3 +157,80 @@ Persistencia recomendada do token:
 4. documento abre/baixa sem acionar leitura indevida no portal DTE;
 5. usuario `viewer` nao consegue executar operacoes de mutacao;
 6. dashboard sinaliza quando DTE estiver `DEGRADED` ou `DOWN`.
+
+
+## 12) Alertas no frontend (n8n)
+
+Objetivo do MVP de notificacoes:
+
+1. permitir configurar um canal webhook do n8n;
+2. permitir testar o canal sem depender de evento real do DTE;
+3. permitir auditar entregas por canal.
+
+Tela recomendada: `Configuracoes > Alertas`
+
+Subsecoes:
+
+1. `Canal n8n`
+   - campos do formulario:
+     - `name`
+     - `endpointUrl`
+     - `webhookToken` (write-only)
+     - `hmacSecret` (write-only)
+     - `enabled`
+     - `timeoutMs`
+     - `maxAttempts`
+   - mapeamento para a API:
+     - `secret = hmacSecret`
+     - `headersJson["x-webhook-token"] = webhookToken`
+     - `headersJson["X-Source"] = "dte-api"`
+2. `Teste de entrega`
+   - botao `Testar canal`
+   - chama `POST /v1/alerts/test-delivery`
+   - exibir retorno com:
+     - `success`
+     - `httpStatus`
+     - `errorMessage`
+     - `eventId`
+     - `outboxId`
+3. `Historico de entregas`
+   - usar `GET /v1/alerts/deliveries`
+   - suportar filtro por `channelId`
+
+Regras importantes para o frontend:
+
+1. `headersJson` retornado pela API pode vir com valores sensiveis mascarados como `[REDACTED]`;
+2. o frontend nao deve tentar reutilizar o valor mascarado em formularios de edicao;
+3. `webhookToken` e `hmacSecret` devem ser tratados como campos write-only;
+4. ao editar um canal no futuro, o frontend deve pedir reentrada do segredo se houver alteracao.
+
+## 13) Contatos de notificacao (proximo passo recomendado)
+
+Para notificacoes por email/WhatsApp via n8n, o sistema precisa de um cadastro de destinos.
+
+Decisao recomendada:
+
+1. curto prazo: manter destinatarios dentro do workflow do n8n para acelerar a entrada em producao;
+2. proximo passo profissional: criar no backend um modulo proprio de `destinatarios de notificacao`.
+
+Modelo recomendado para esse modulo futuro:
+
+1. escopo por empresa (`contratoId`) ou global;
+2. tipos de destino:
+   - `email`
+   - `whatsapp`
+3. campos minimos:
+   - `name`
+   - `contratoId` (opcional para regra global)
+   - `email` (opcional)
+   - `phoneNumber` (opcional)
+   - `enabled`
+   - `preferredChannels`
+4. frontend deve prever uma tela futura:
+   - `Configuracoes > Destinatarios`
+
+Enquanto esse modulo nao existir na API, o front deve considerar que:
+
+1. o cadastro do canal n8n fica na API;
+2. a decisao de para quem enviar ainda fica dentro do n8n.
+

@@ -10,7 +10,16 @@ export async function createChannel(payload) {
   return data.data
 }
 
+/**
+ * payload: { channelId, eventType, companyName, assunto }
+ * response: { success, httpStatus, errorMessage, eventId, outboxId }
+ */
+export async function testDelivery(payload) {
+  const { data } = await client.post('/v1/alerts/test-delivery', payload)
+  return data.data
+}
+
 export async function getDeliveries(params = {}) {
   const { data } = await client.get('/v1/alerts/deliveries', { params })
-  return data.data // Delivery[]
+  return data // { data: [], meta: {} }
 }
