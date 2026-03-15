@@ -319,6 +319,28 @@ x-api-token: {{apiToken}}
 GET {{baseUrl}}/v1/alerts/deliveries?page={{page}}&pageSize={{pageSize}}
 x-api-token: {{apiToken}}
 
+### Desativar canal de alerta e cancelar fila pendente do canal
+PATCH {{baseUrl}}/v1/alerts/channels/{{alertChannelId}}/status
+Content-Type: application/json
+x-api-token: {{apiToken}}
+
+{
+  "enabled": false
+}
+
+### Reativar canal de alerta
+PATCH {{baseUrl}}/v1/alerts/channels/{{alertChannelId}}/status
+Content-Type: application/json
+x-api-token: {{apiToken}}
+
+{
+  "enabled": true
+}
+
+### Remover canal sem historico (exige canal desativado e sem notification_outbox)
+DELETE {{baseUrl}}/v1/alerts/channels/{{alertChannelId}}
+x-api-token: {{apiToken}}
+
 ### Disparar entrega sintetica de alerta para um canal especifico
 POST {{baseUrl}}/v1/alerts/test-delivery
 Content-Type: application/json
@@ -365,6 +387,7 @@ x-api-token: {{apiToken}}
 
 ### Endpoint protegido sem token (deve retornar 401)
 GET {{baseUrl}}/v1/companies?page=1&pageSize=5
+
 
 
 

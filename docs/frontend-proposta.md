@@ -1,4 +1,4 @@
-﻿# Proposta de Frontend - DTE Console
+# Proposta de Frontend - DTE Console
 
 Data base: 12 de marco de 2026.
 Objetivo: definir um front profissional, orientado a operacao, com baixo acoplamento e foco em mensagens nao lidas.
@@ -81,12 +81,12 @@ Proposta:
 1. visao limpa via `/view`;
 2. metadados de envio/leitura;
 3. lista de documentos com acao de download/preview;
-4. indicador de origem do arquivo (`storage` ou `DTE`).
+4. indicador de status do download direto no DTE.
 
 ## Jobs
 
 1. lista de jobs de sync;
-2. status com progresso textual (`pending/running/completed/failed`);
+2. status com progresso textual (`pending/running/success/failed`);
 3. exibicao de `errorMessage` com acoes recomendadas.
 
 ## Admin usuarios
@@ -132,7 +132,7 @@ sequenceDiagram
     API-->>FE: conteudo
 
     U->>FE: baixar PDF
-    FE->>API: GET /download?delivery=proxy|redirect
+    FE->>API: GET /download?delivery=proxy
     API-->>FE: arquivo
 ```
 
@@ -182,3 +182,4 @@ sequenceDiagram
 2. equipe enxerga rapidamente o que esta `nao_lida`;
 3. indisponibilidade do DTE fica visivel no painel;
 4. front vira camada de produto, API vira camada de integracao e confiabilidade.
+

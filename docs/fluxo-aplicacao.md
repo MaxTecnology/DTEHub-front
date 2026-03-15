@@ -11,11 +11,9 @@ flowchart LR
     API --> DB[(Postgres)]
     API --> REDIS[(Redis)]
     API --> DTE[DTE SEFAZ]
-    API --> MINIO[(MinIO/S3)]
 
     DB --> API
     DTE --> API
-    MINIO --> API
 
     W1[Worker Sync]
     W2[Worker Notificacao]
@@ -126,7 +124,6 @@ sequenceDiagram
     participant FE as Frontend
     participant API as API
     participant DB as Postgres
-    participant MINIO as MinIO
     participant DTE as DTE
 
     FE->>API: GET /v1/companies/{contratoId}/messages/unread
@@ -139,15 +136,9 @@ sequenceDiagram
     API-->>FE: conteudo sem marcar leitura no portal
 
     FE->>API: GET /documents/{d}/download?delivery=proxy
-    alt storage habilitado e objeto cacheado
-        API->>MINIO: getObject/presigned
-        MINIO-->>API: arquivo
-        API-->>FE: PDF
-    else sem cache
-        API->>DTE: download autenticado
-        DTE-->>API: arquivo
-        API-->>FE: PDF
-    end
+    API->>DTE: download autenticado
+    DTE-->>API: arquivo
+    API-->>FE: PDF
 ```
 
 ## 6) Fluxo de notificacao de nao lidas
@@ -217,13 +208,14 @@ sequenceDiagram
    - `GET /v1/auth/status`
    - `POST /v1/auth/refresh`
 3. Sync e consulta:
+   - `GET /v1/jobs?status=pending,running&jobType=sync_messages`
    - `POST /v1/sync/messages`
+   - `GET /v1/jobs`
    - `GET /v1/jobs/{jobId}`
    - `GET /v1/companies`
    - `GET /v1/companies/{contratoId}/messages/unread`
 4. Documento/anexo:
    - `GET /v1/companies/{contratoId}/messages/{messageId}/documents/{documentoId}`
-   - `POST /v1/companies/{contratoId}/messages/{messageId}/documents/{documentoId}/cache`
    - `GET /v1/companies/{contratoId}/messages/{messageId}/documents/{documentoId}/download`
 5. Usuarios/RBAC:
    - `POST /v1/users/login`
@@ -233,3 +225,4 @@ sequenceDiagram
    - `POST /v1/users`
    - `PATCH /v1/users/{userId}/status`
    - `POST /v1/users/{userId}/reset-password`
+

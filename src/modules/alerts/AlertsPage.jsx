@@ -13,9 +13,19 @@ import {
   Eye,
   EyeOff,
   AlertTriangle,
+  PowerOff,
+  Power,
+  Trash2,
 } from 'lucide-react'
 import { toast } from 'sonner'
-import { getChannels, createChannel, testDelivery, getDeliveries } from '@/api/alerts'
+import {
+  getChannels,
+  createChannel,
+  testDelivery,
+  getDeliveries,
+  updateChannelStatus,
+  deleteChannel,
+} from '@/api/alerts'
 import { useSession } from '@/store/session'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -48,7 +58,7 @@ const ROLE_WEIGHT = { owner: 4, admin: 3, operator: 2, viewer: 1 }
 
 const channelSchema = z.object({
   name: z.string().min(1, 'Nome obrigatório'),
-  endpointUrl: z.string().url({ message: 'URL inválida' }),
+  endpointUrl: z.string().min(1, 'URL obrigatória').refine((v) => { try { new URL(v); return true } catch { return false } }, { message: 'URL inválida' }),
   webhookToken: z.string().min(1, 'Webhook token obrigatório'),
   hmacSecret: z.string().min(1, 'HMAC secret obrigatório'),
   enabled: z.boolean().default(true),
@@ -143,8 +153,10 @@ export default function AlertsPage() {
   const { role } = useSession()
   const queryClient = useQueryClient()
   const canManage = (ROLE_WEIGHT[role] ?? 0) >= ROLE_WEIGHT.admin
-  const [dialogOpen, setDialogOpen] = useState(false)
-  const [testResults, setTestResults] = useState({}) // { [channelId]: result }
+
+  const [createDialogOpen, setCreateDialogOpen] = useState(false)
+  const [deleteTarget, setDeleteTarget] = useState(null) // channel object para confirmar exclusão
+  const [testResults, setTestResults] = useState({})
   const [deliveryFilter, setDeliveryFilter] = useState('')
 
   const { data: channels = [], isLoading: channelsLoading } = useQuery({
@@ -188,11 +200,51 @@ export default function AlertsPage() {
       }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['alert-channels'] })
-      setDialogOpen(false)
+      setCreateDialogOpen(false)
       form.reset()
       toast.success('Canal criado com sucesso')
     },
     onError: () => toast.error('Falha ao criar canal'),
+  })
+
+  const statusMutation = useMutation({
+    mutationFn: ({ channelId, enabled }) => updateChannelStatus(channelId, enabled),
+    onSuccess: (result, { enabled }) => {
+      queryClient.invalidateQueries({ queryKey: ['alert-channels'] })
+      if (!enabled) {
+        const cancelled = result?.cancelledOutboxItems ?? 0
+        toast.success(
+          cancelled > 0
+            ? `Canal desativado — ${cancelled} item(ns) da fila cancelado(s)`
+            : 'Canal desativado'
+        )
+      } else {
+        toast.success('Canal reativado')
+      }
+    },
+    onError: (_, { enabled }) =>
+      toast.error(enabled ? 'Falha ao reativar canal' : 'Falha ao desativar canal'),
+  })
+
+  const deleteMutation = useMutation({
+    mutationFn: (channelId) => deleteChannel(channelId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['alert-channels'] })
+      setDeleteTarget(null)
+      toast.success('Canal removido')
+    },
+    onError: (error) => {
+      const status = error?.response?.status
+      if (status === 409) {
+        setDeleteTarget(null)
+        toast.error(
+          'Este canal possui histórico de entregas e não pode ser excluído. Desative-o para pausar as notificações.',
+          { duration: 6000 }
+        )
+      } else {
+        toast.error('Falha ao remover canal')
+      }
+    },
   })
 
   const testMutation = useMutation({
@@ -240,7 +292,7 @@ export default function AlertsPage() {
         <TabsContent value="channels" className="space-y-4">
           {canManage && (
             <div className="flex justify-end">
-              <Button size="sm" onClick={() => setDialogOpen(true)} data-testid="add-channel-btn">
+              <Button size="sm" onClick={() => setCreateDialogOpen(true)} data-testid="add-channel-btn">
                 <Plus className="h-4 w-4 mr-1.5" />
                 Novo canal
               </Button>
@@ -268,8 +320,11 @@ export default function AlertsPage() {
                 channel={channel}
                 canManage={canManage}
                 isTesting={testMutation.isPending && testMutation.variables === channel.id}
+                isTogglingStatus={statusMutation.isPending && statusMutation.variables?.channelId === channel.id}
                 testResult={testResults[channel.id]}
                 onTest={() => testMutation.mutate(channel.id)}
+                onToggleStatus={(enabled) => statusMutation.mutate({ channelId: channel.id, enabled })}
+                onRequestDelete={() => setDeleteTarget(channel)}
               />
             ))
           )}
@@ -277,10 +332,9 @@ export default function AlertsPage() {
 
         {/* ── ABA HISTÓRICO ── */}
         <TabsContent value="history" className="space-y-4">
-          {/* Filtro por canal */}
           {channels.length > 0 && (
             <div className="flex items-center gap-2 flex-wrap">
-              <span className="text-sm text-muted-foreground">Filtrar por canal:</span>
+              <span className="text-sm text-muted-foreground">Filtrar:</span>
               <Button
                 size="sm"
                 variant={deliveryFilter === '' ? 'default' : 'outline'}
@@ -317,10 +371,7 @@ export default function AlertsPage() {
                 deliveries.map((delivery, idx) => (
                   <div key={delivery.id ?? idx}>
                     {idx > 0 && <Separator className="my-2" />}
-                    <div
-                      className="flex items-start justify-between gap-4"
-                      data-testid="delivery-row"
-                    >
+                    <div className="flex items-start justify-between gap-4" data-testid="delivery-row">
                       <div className="flex items-start gap-2">
                         <DeliveryStatusIcon status={delivery.status} />
                         <div>
@@ -354,7 +405,10 @@ export default function AlertsPage() {
       </Tabs>
 
       {/* ── DIALOG: criar canal ── */}
-      <Dialog open={dialogOpen} onOpenChange={(open) => { setDialogOpen(open); if (!open) form.reset() }}>
+      <Dialog
+        open={createDialogOpen}
+        onOpenChange={(open) => { setCreateDialogOpen(open); if (!open) form.reset() }}
+      >
         <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Novo canal de notificação</DialogTitle>
@@ -367,13 +421,16 @@ export default function AlertsPage() {
             <AlertTriangle className="h-3.5 w-3.5 mt-0.5 shrink-0" />
             <span>
               O <strong>Webhook Token</strong> e o <strong>HMAC Secret</strong> são armazenados com
-              segurança e <strong>não serão exibidos</strong> após o cadastro. Guarde-os em local
-              seguro.
+              segurança e <strong>não serão exibidos</strong> após o cadastro. Guarde-os em local seguro.
             </span>
           </div>
 
           <Form {...form}>
-            <form onSubmit={form.handleSubmit((v) => createMutation.mutateAsync(v))} className="space-y-4" noValidate>
+            <form
+              onSubmit={form.handleSubmit((v) => createMutation.mutateAsync(v))}
+              className="space-y-4"
+              noValidate
+            >
               <FormField
                 control={form.control}
                 name="name"
@@ -387,7 +444,6 @@ export default function AlertsPage() {
                   </FormItem>
                 )}
               />
-
               <FormField
                 control={form.control}
                 name="endpointUrl"
@@ -408,7 +464,6 @@ export default function AlertsPage() {
                   </FormItem>
                 )}
               />
-
               <FormField
                 control={form.control}
                 name="webhookToken"
@@ -420,7 +475,6 @@ export default function AlertsPage() {
                   />
                 )}
               />
-
               <FormField
                 control={form.control}
                 name="hmacSecret"
@@ -432,7 +486,6 @@ export default function AlertsPage() {
                   />
                 )}
               />
-
               <div className="grid grid-cols-2 gap-4">
                 <FormField
                   control={form.control}
@@ -461,7 +514,6 @@ export default function AlertsPage() {
                   )}
                 />
               </div>
-
               <FormField
                 control={form.control}
                 name="enabled"
@@ -479,16 +531,18 @@ export default function AlertsPage() {
                   </FormItem>
                 )}
               />
-
               {form.formState.errors.root && (
                 <p className="text-sm text-destructive">{form.formState.errors.root.message}</p>
               )}
-
               <DialogFooter>
-                <Button type="button" variant="outline" onClick={() => setDialogOpen(false)}>
+                <Button type="button" variant="outline" onClick={() => setCreateDialogOpen(false)}>
                   Cancelar
                 </Button>
-                <Button type="submit" disabled={createMutation.isPending} data-testid="submit-channel-btn">
+                <Button
+                  type="submit"
+                  disabled={createMutation.isPending}
+                  data-testid="submit-channel-btn"
+                >
                   {createMutation.isPending ? 'Salvando...' : 'Salvar canal'}
                 </Button>
               </DialogFooter>
@@ -496,11 +550,48 @@ export default function AlertsPage() {
           </Form>
         </DialogContent>
       </Dialog>
+
+      {/* ── DIALOG: confirmar exclusão ── */}
+      <Dialog open={!!deleteTarget} onOpenChange={(open) => { if (!open) setDeleteTarget(null) }}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-destructive">
+              <Trash2 className="h-4 w-4" />
+              Remover canal
+            </DialogTitle>
+            <DialogDescription>
+              Tem certeza que deseja remover o canal{' '}
+              <strong>{deleteTarget?.name}</strong>?
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex items-start gap-2 rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800">
+            <AlertTriangle className="h-3.5 w-3.5 mt-0.5 shrink-0" />
+            <span>
+              Canais com histórico de entregas <strong>não podem ser excluídos</strong>. Se este
+              canal já enviou notificações, use <strong>Desativar</strong> para pausá-lo.
+            </span>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDeleteTarget(null)}>
+              Cancelar
+            </Button>
+            <Button
+              variant="destructive"
+              disabled={deleteMutation.isPending}
+              onClick={() => deleteMutation.mutate(deleteTarget.id)}
+              data-testid="confirm-delete-btn"
+            >
+              {deleteMutation.isPending ? 'Removendo...' : 'Confirmar remoção'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
 
-function ChannelCard({ channel, canManage, isTesting, testResult, onTest }) {
+function ChannelCard({ channel, canManage, isTesting, isTogglingStatus, testResult, onTest, onToggleStatus, onRequestDelete }) {
+  const isEnabled = channel.enabled
   const headers = channel.headersJson ?? {}
   const headerEntries = Object.entries(headers)
 
@@ -513,11 +604,11 @@ function ChannelCard({ channel, canManage, isTesting, testResult, onTest }) {
             <CardTitle className="text-sm font-medium">{channel.name}</CardTitle>
           </div>
           <Badge
-            variant={channel.enabled ? 'outline' : 'secondary'}
-            className={channel.enabled ? 'border-green-300 text-green-700' : ''}
+            variant={isEnabled ? 'outline' : 'secondary'}
+            className={isEnabled ? 'border-green-300 text-green-700' : 'text-muted-foreground'}
             data-testid="channel-status-badge"
           >
-            {channel.enabled ? 'Ativo' : 'Inativo'}
+            {isEnabled ? 'Ativo' : 'Inativo'}
           </Badge>
         </div>
         <CardDescription className="text-xs font-mono truncate pl-6">
@@ -526,7 +617,6 @@ function ChannelCard({ channel, canManage, isTesting, testResult, onTest }) {
       </CardHeader>
 
       <CardContent className="space-y-3">
-        {/* Headers (pode vir mascarado) */}
         {headerEntries.length > 0 && (
           <div className="space-y-1">
             <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
@@ -535,9 +625,7 @@ function ChannelCard({ channel, canManage, isTesting, testResult, onTest }) {
             {headerEntries.map(([key, val]) => (
               <div key={key} className="flex items-center gap-2 text-xs font-mono">
                 <span className="text-muted-foreground">{key}:</span>
-                <span className={val === '[REDACTED]' ? 'text-amber-600 italic' : ''}>
-                  {val}
-                </span>
+                <span className={val === '[REDACTED]' ? 'text-amber-600 italic' : ''}>{val}</span>
                 {val === '[REDACTED]' && (
                   <span className="text-amber-600 text-[10px]">(valor sensível mascarado)</span>
                 )}
@@ -551,22 +639,63 @@ function ChannelCard({ channel, canManage, isTesting, testResult, onTest }) {
           {channel.maxAttempts && <span>Tentativas: {channel.maxAttempts}</span>}
         </div>
 
-        {/* Teste de entrega */}
         {canManage && (
-          <div className="space-y-2 pt-1">
-            <Button
-              variant="outline"
-              size="sm"
-              disabled={isTesting}
-              onClick={onTest}
-              data-testid="test-channel-btn"
-            >
-              <FlaskConical className="h-3.5 w-3.5 mr-1.5" />
-              {isTesting ? 'Enviando teste...' : 'Testar canal'}
-            </Button>
-            <TestResultCard result={testResult} />
+          <div className="flex flex-wrap items-center gap-2 pt-1">
+            {/* Testar — só canal ativo */}
+            {isEnabled && (
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={isTesting || isTogglingStatus}
+                onClick={onTest}
+                data-testid="test-channel-btn"
+              >
+                <FlaskConical className="h-3.5 w-3.5 mr-1.5" />
+                {isTesting ? 'Enviando...' : 'Testar'}
+              </Button>
+            )}
+
+            {/* Desativar / Reativar */}
+            {isEnabled ? (
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={isTogglingStatus}
+                onClick={() => onToggleStatus(false)}
+                data-testid="disable-channel-btn"
+              >
+                <PowerOff className="h-3.5 w-3.5 mr-1.5" />
+                {isTogglingStatus ? 'Desativando...' : 'Desativar'}
+              </Button>
+            ) : (
+              <>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  disabled={isTogglingStatus}
+                  onClick={() => onToggleStatus(true)}
+                  data-testid="enable-channel-btn"
+                >
+                  <Power className="h-3.5 w-3.5 mr-1.5" />
+                  {isTogglingStatus ? 'Reativando...' : 'Reativar'}
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                  disabled={isTogglingStatus}
+                  onClick={onRequestDelete}
+                  data-testid="delete-channel-btn"
+                >
+                  <Trash2 className="h-3.5 w-3.5 mr-1.5" />
+                  Remover
+                </Button>
+              </>
+            )}
           </div>
         )}
+
+        <TestResultCard result={testResult} />
       </CardContent>
     </Card>
   )

@@ -19,12 +19,8 @@ Objetivo: executar a API por rotas, com login/sessao DTE e sincronizacao de mens
    - se usar fonte `env`: `CERT_PFX_PATH` e `CERT_PFX_PASSWORD`
    - se usar fonte `db`: `CERT_VAULT_MASTER_KEY_BASE64` e certificado ativo em `/v1/certificates/*`
    - `DTE_AUTH_CERT_SOURCE=auto|env|db`
-6. Para cache/download via MinIO (fase 7):
-   - `OBJECT_STORAGE_ENABLED=true`
-   - `OBJECT_STORAGE_PROVIDER=minio`
-   - `MINIO_ENDPOINT`, `MINIO_PORT`, `MINIO_USE_SSL`
-   - `MINIO_ACCESS_KEY`, `MINIO_SECRET_KEY`
-   - `MINIO_BUCKET`, `MINIO_PRESIGNED_TTL_SECONDS`
+6. Download de documentos:
+   - modo atual e direto na DTE (sem MinIO/cache).
 
 ## 2. Ordem de chamadas recomendada
 
@@ -47,20 +43,22 @@ Objetivo: executar a API por rotas, com login/sessao DTE e sincronizacao de mens
    - `POST /v1/certificates/upload` (multipart recomendado: arquivo `.pfx` + senha)
    - `POST /v1/certificates/{certificateId}/test-login`
    - esperado: `201/200`
-6. Disparar sincronizacao:
+6. Antes de disparar sincronizacao, verificar se ja existe job ativo:
+   - `GET /v1/jobs?status=pending,running&jobType=sync_messages`
+   - se retornar itens, reutilizar o job existente no cliente/operacao
+7. Disparar sincronizacao:
    - `POST /v1/sync/messages`
    - body geral: `{ "dryRun": false }`
    - esperado: `202` com `data.jobId`
-7. Acompanhar job:
+8. Acompanhar job:
    - `GET /v1/jobs/{jobId}`
-   - esperado: `200` com status `pending|running|completed|failed`
-8. Consultar dados persistidos:
+   - esperado: `200` com status `pending|running|success|failed`
+9. Consultar dados persistidos:
    - `GET /v1/companies`
    - `GET /v1/companies/{contratoId}/messages`
    - `GET /v1/companies/{contratoId}/messages/{messageId}`
    - `GET /v1/companies/{contratoId}/messages/{messageId}/view`
    - `GET /v1/companies/{contratoId}/messages/{messageId}/documents/{documentoId}`
-   - `POST /v1/companies/{contratoId}/messages/{messageId}/documents/{documentoId}/cache`
    - `GET /v1/companies/{contratoId}/messages/{messageId}/documents/{documentoId}/download`
    - `GET /v1/companies/{contratoId}/messages/unread`
    - `GET /v1/events/unread`
@@ -101,7 +99,8 @@ Ele ja contem:
 
 1. variaveis (`@baseUrl`, `@apiToken`, `@contratoId`, `@jobId`);
 2. ordem operacional das rotas;
-3. exemplos de payload para sync geral e sync por alvo.
+3. exemplos de payload para sync geral e sync por alvo;
+4. consulta de jobs ativos para evitar disparo duplicado.
 
 ## 6. Troubleshooting rapido
 
@@ -122,6 +121,9 @@ Ele ja contem:
    - chamar `POST /v1/auth/refresh` se necessario;
    - repetir download.
    - observacao: a API agora seta `contratoHonorarioAtivo` antes do download para reduzir `401`.
+5. Download de documento retornando `409 document_without_url`:
+   - documento veio sem URL no payload persistido;
+   - reexecute o sync e valide o detalhe da mensagem.
 
 ## 7. Regra de leitura (operacional)
 
@@ -134,14 +136,9 @@ Ele ja contem:
    - rodar novo sync;
    - confirmar se houve mudanca de `nao_lida` para `lida`.
 
-## 8. Contrato MinIO (fase 7 base)
+## 8. Contrato de documento (modo direto DTE)
 
-Estas rotas ja estao implementadas na base da fase 7 e exigem `OBJECT_STORAGE_ENABLED=true`:
+1. `GET /v1/companies/{contratoId}/messages/{messageId}/documents/{documentoId}`
+2. `GET /v1/companies/{contratoId}/messages/{messageId}/documents/{documentoId}/download?delivery=proxy`
+3. `GET /v1/companies/{contratoId}/messages/{messageId}/documents/{documentoId}/download?delivery=proxy&format=base64`
 
-1. `POST /v1/companies/{contratoId}/messages/{messageId}/documents/{documentoId}/cache`
-2. `GET /v1/companies/{contratoId}/messages/{messageId}/documents/{documentoId}`
-3. `GET /v1/companies/{contratoId}/messages/{messageId}/documents/{documentoId}/download?delivery=proxy|redirect`
-
-Referencia completa:
-
-- `docs/fase-07-minio-document-cache.md`

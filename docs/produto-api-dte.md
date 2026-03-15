@@ -211,29 +211,29 @@ Jobs:
 4. monitoramento de indisponibilidade ativo e confiavel;
 5. API interna estavel para consulta de empresas, mensagens e nao lidas.
 
-## 13) Estrategia de anexos (MinIO) - fase 7 em andamento
+## 13) Estrategia de anexos (download direto DTE) - fase 7 simplificada
 
 Diretriz:
 
 1. nao usar Postgres para armazenar binario de PDF;
-2. usar MinIO/S3 para objeto e Postgres para metadado/auditoria;
-3. adotar dois modos de entrega: `proxy` e `redirect` com URL assinada.
+2. baixar anexo diretamente da DTE no momento da solicitacao;
+3. manter modo de entrega unico: `proxy` (stream pela API).
 
-Beneficios:
+Beneficios (MVP):
 
-1. melhor escalabilidade para downloads;
-2. reducao de dependencia do DTE em leitura recorrente;
-3. trilha auditavel por hash/tamanho/chave de objeto.
+1. menor complexidade operacional;
+2. menor custo de infraestrutura;
+3. menos pontos de falha em ambiente inicial.
+
+Trade-offs:
+
+1. dependencia maior da disponibilidade do DTE para cada download;
+2. sem cache de anexos em storage externo nesta fase.
 
 Contrato da fase:
 
-1. `POST /v1/companies/{contratoId}/messages/{messageId}/documents/{documentoId}/cache`
-2. `GET /v1/companies/{contratoId}/messages/{messageId}/documents/{documentoId}`
-3. `GET /v1/companies/{contratoId}/messages/{messageId}/documents/{documentoId}/download?delivery=proxy|redirect`
-
-Documento de referencia:
-
-- `docs/fase-07-minio-document-cache.md`
+1. `GET /v1/companies/{contratoId}/messages/{messageId}/documents/{documentoId}`
+2. `GET /v1/companies/{contratoId}/messages/{messageId}/documents/{documentoId}/download?delivery=proxy`
 
 ## 14) Estrategia de certificado (Vault) - fase 8 em andamento
 

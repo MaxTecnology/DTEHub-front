@@ -1,0 +1,82 @@
+{
+  "name": "DTE Alerts - Webhook Receiver",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "dte-alerts",
+        "responseMode": "responseNode",
+        "options": {
+          "rawBody": true
+        }
+      },
+      "id": "Webhook_DteAlerts",
+      "name": "Receive DTE Alert",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        260,
+        300
+      ],
+      "webhookId": "dte-alerts"
+    },
+    {
+      "parameters": {
+        "jsCode": "const crypto = require('crypto');\n\nconst source = items[0].json ?? {};\nconst headersInput = source.headers ?? {};\nconst headers = {};\nfor (const [key, value] of Object.entries(headersInput)) {\n  headers[String(key).toLowerCase()] = Array.isArray(value) ? String(value[0] ?? '') : String(value ?? '');\n}\n\nconst rawBodyText =\n  typeof source.rawBody === 'string' ? source.rawBody :\n  typeof source.body === 'string' ? source.body :\n  source.body !== undefined ? JSON.stringify(source.body) :\n  JSON.stringify(source);\n\nlet payload = source.body;\nif (!payload || typeof payload !== 'object' || Array.isArray(payload)) {\n  try {\n    payload = JSON.parse(rawBodyText);\n  } catch (error) {\n    throw new Error(`Invalid JSON payload: ${error.message}`);\n  }\n}\n\nconst expectedToken = '__CHANGE_ME_WEBHOOK_TOKEN__';\nif (expectedToken) {\n  const providedToken = headers['x-webhook-token'] ?? '';\n  if (providedToken !== expectedToken) {\n    throw new Error('Invalid x-webhook-token header.');\n  }\n}\n\nconst secret = '__CHANGE_ME_HMAC_SECRET__';\nconst receivedSignature = headers['x-dte-signature'] ?? '';\nconst expectedSignature = 'sha256=' + crypto.createHmac('sha256', secret).update(rawBodyText, 'utf8').digest('hex');\nif (!receivedSignature || receivedSignature !== expectedSignature) {\n  throw new Error('Invalid x-dte-signature header.');\n}\n\nreturn [{\n  json: {\n    ok: true,\n    eventType: payload.event?.type ?? null,\n    companyName: payload.company?.name ?? null,\n    contratoId: payload.company?.contratoId ?? null,\n    assunto: payload.message?.assunto ?? null,\n    messageId: payload.message?.messageId ?? null,\n    unreadLink: payload.links?.companyUnreadMessages ?? null,\n    payload\n  }\n}];"
+      },
+      "id": "Code_ValidateDteAlert",
+      "name": "Validate DTE Alert",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        520,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "noData",
+        "options": {
+          "responseCode": 204
+        }
+      },
+      "id": "Respond_204",
+      "name": "Respond 204",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.3,
+      "position": [
+        780,
+        300
+      ]
+    }
+  ],
+  "connections": {
+    "Receive DTE Alert": {
+      "main": [
+        [
+          {
+            "node": "Validate DTE Alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate DTE Alert": {
+      "main": [
+        [
+          {
+            "node": "Respond 204",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {},
+  "versionId": "dte-alerts-webhook-v1"
+}

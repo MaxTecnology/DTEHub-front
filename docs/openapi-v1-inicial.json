@@ -85,6 +85,21 @@
         "summary": "Cria canal webhook de alerta"
       }
     },
+    "/v1/alerts/channels/{channelId}/status": {
+      "patch": {
+        "summary": "Ativa ou desativa canal de alerta"
+      }
+    },
+    "/v1/alerts/channels/{channelId}": {
+      "delete": {
+        "summary": "Remove canal de alerta sem historico de notificacao"
+      }
+    },
+    "/v1/alerts/test-delivery": {
+      "post": {
+        "summary": "Dispara entrega sintetica de alerta para teste manual"
+      }
+    },
     "/v1/alerts/deliveries": {
       "get": {
         "summary": "Lista tentativas de notificacao"
@@ -92,4 +107,5 @@
     }
   }
 }
+
 

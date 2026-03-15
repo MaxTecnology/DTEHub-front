@@ -53,7 +53,7 @@ Base comum dos testes:
 5. Fase 4 - Notificacoes
 6. Fase 5 - Monitoramento de indisponibilidade DTE
 7. Fase 6 - Endurecimento operacional e piloto
-8. Fase 7 - Cache de documentos em MinIO e entrega profissional de anexos
+8. Fase 7 - Download direto de documentos na DTE
 9. Fase 8 - Vault de certificados PFX com criptografia e auditoria
 10. Fase 9 - Usuarios, login bearer e RBAC da API
 
@@ -156,6 +156,7 @@ Entregas:
    - `GET /v1/companies/{contratoId}/messages/unread`
    - `GET /v1/events/unread`
    - `POST /v1/sync/messages`
+   - `GET /v1/jobs`
    - `GET /v1/jobs/{jobId}`
 3. validacao de input e padrao de erro.
 4. guia operacional de rotas para uso manual (`docs/doc.http` e `docs/guia-rotas-api.md`).
@@ -254,36 +255,34 @@ Criterio de saida:
 - execucao estavel por varios dias com monitoramento ativo e alertas funcionais.
 - `npm run test:phase6` aprovado.
 
-## Fase 7 - Cache de documentos em MinIO
+## Fase 7 - Download direto de documentos na DTE
 
-Status: `em_andamento`
+Status: `concluida`
 
 Objetivo:
 
-Adicionar camada de object storage para anexos/PDF com entrega `proxy` e `redirect` (URL assinada), sem depender do DTE em toda leitura.
+Simplificar o produto para download de anexo direto na DTE via API, removendo dependencia de object storage no MVP.
 
 Entregas:
 
-1. tabela `document_assets` para metadados de armazenamento;
-2. integracao MinIO/S3 com upload + consulta;
-3. rotas de cache/metadata/download de documento;
-4. fallback controlado para DTE quando objeto ainda nao cacheado;
-5. metrica de hit ratio do cache e trilha de auditoria.
+1. remocao da camada MinIO/object storage do codigo de producao;
+2. rota de metadata de documento simplificada (sem estado de cache);
+3. rota de download focada em DTE direto (`delivery=proxy`);
+4. limpeza de variaveis de ambiente e dependencias nao utilizadas;
+5. atualizacao de docs de rotas e handoff frontend.
 
 Checklist:
 
-- [x] definir variaveis `MINIO_*` e validar parse no config
-- [x] criar migration da tabela `document_assets`
-- [x] implementar servico de storage e assinatura de URL
-- [x] implementar rota `POST .../cache`
+- [x] remover variaveis `OBJECT_STORAGE_*` e `MINIO_*`
+- [x] remover servicos/repositorios/tipos de document cache
+- [x] remover rota `POST .../cache`
 - [x] implementar rota `GET .../documents/{documentoId}`
-- [x] implementar download `delivery=proxy|redirect`
+- [x] implementar download `delivery=proxy`
 - [x] adicionar testes automatizados de fase (`test:phase7`)
-- [ ] validar integracao com MinIO de producao (credenciais, bucket policy e retencao)
 
 Criterio de saida:
 
-- download de anexo funcional mesmo sem depender do DTE no momento da leitura, com fallback auditavel.
+- download de anexo funcional direto na DTE, com menor complexidade operacional no MVP.
 - `npm run test:phase7` aprovado.
 
 ## Fase 8 - Vault de certificados PFX
@@ -378,6 +377,7 @@ Impactos:
 - Fase 4: `concluida`
 - Fase 5: `concluida`
 - Fase 6: `em_andamento`
-- Fase 7: `em_andamento`
+- Fase 7: `concluida`
 - Fase 8: `em_andamento`
 - Fase 9: `em_andamento`
+

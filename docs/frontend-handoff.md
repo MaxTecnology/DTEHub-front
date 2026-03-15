@@ -89,6 +89,8 @@ Persistencia recomendada do token:
 8. Alertas
    - `GET /v1/alerts/channels`
    - `POST /v1/alerts/channels` (admin/owner)
+   - `PATCH /v1/alerts/channels/{channelId}/status` (admin/owner)
+   - `DELETE /v1/alerts/channels/{channelId}` (admin/owner)
    - `POST /v1/alerts/test-delivery` (admin/owner)
    - `GET /v1/alerts/deliveries`
 9. Usuarios
@@ -164,8 +166,10 @@ Persistencia recomendada do token:
 Objetivo do MVP de notificacoes:
 
 1. permitir configurar um canal webhook do n8n;
-2. permitir testar o canal sem depender de evento real do DTE;
-3. permitir auditar entregas por canal.
+2. permitir desativar um canal sem perder auditoria;
+3. permitir remover apenas canal sem historico;
+4. permitir testar o canal sem depender de evento real do DTE;
+5. permitir auditar entregas por canal.
 
 Tela recomendada: `Configuracoes > Alertas`
 
@@ -184,7 +188,16 @@ Subsecoes:
      - `secret = hmacSecret`
      - `headersJson["x-webhook-token"] = webhookToken`
      - `headersJson["X-Source"] = "dte-api"`
-2. `Teste de entrega`
+2. `Acoes do canal`
+   - botao `Desativar canal`
+   - chama `PATCH /v1/alerts/channels/{channelId}/status` com `{ "enabled": false }`
+   - exibir `cancelledOutboxItems` e `affectedEvents`
+   - botao `Reativar canal`
+   - chama `PATCH /v1/alerts/channels/{channelId}/status` com `{ "enabled": true }`
+   - botao `Remover canal`
+   - chama `DELETE /v1/alerts/channels/{channelId}`
+   - se vier `409`, exibir que o canal possui historico e deve permanecer apenas desativado
+3. `Teste de entrega`
    - botao `Testar canal`
    - chama `POST /v1/alerts/test-delivery`
    - exibir retorno com:
@@ -193,7 +206,7 @@ Subsecoes:
      - `errorMessage`
      - `eventId`
      - `outboxId`
-3. `Historico de entregas`
+4. `Historico de entregas`
    - usar `GET /v1/alerts/deliveries`
    - suportar filtro por `channelId`
 
@@ -202,7 +215,8 @@ Regras importantes para o frontend:
 1. `headersJson` retornado pela API pode vir com valores sensiveis mascarados como `[REDACTED]`;
 2. o frontend nao deve tentar reutilizar o valor mascarado em formularios de edicao;
 3. `webhookToken` e `hmacSecret` devem ser tratados como campos write-only;
-4. ao editar um canal no futuro, o frontend deve pedir reentrada do segredo se houver alteracao.
+4. ao editar um canal no futuro, o frontend deve pedir reentrada do segredo se houver alteracao;
+5. excluir canal e uma acao excepcional: a UX deve priorizar desativacao e usar delete apenas quando o backend permitir.
 
 ## 13) Contatos de notificacao (proximo passo recomendado)
 
@@ -233,4 +247,6 @@ Enquanto esse modulo nao existir na API, o front deve considerar que:
 
 1. o cadastro do canal n8n fica na API;
 2. a decisao de para quem enviar ainda fica dentro do n8n.
+
+
 
