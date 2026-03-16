@@ -32,7 +32,7 @@ import {
 import { useSession } from '@/store/session'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Separator } from '@/components/ui/separator'
 import { Switch } from '@/components/ui/switch'
@@ -289,23 +289,16 @@ export default function AlertsPage() {
 
   const deleteMutation = useMutation({
     mutationFn: (channelId) => deleteChannel(channelId),
-    onSuccess: () => {
+    onSuccess: (result) => {
       queryClient.invalidateQueries({ queryKey: ['alert-channels'] })
       setDeleteTarget(null)
-      toast.success('Canal removido')
-    },
-    onError: (error) => {
-      const status = error?.response?.status
-      if (status === 409) {
-        setDeleteTarget(null)
-        toast.error(
-          'Este canal possui histórico de entregas e não pode ser excluído. Desative-o para pausar as notificações.',
-          { duration: 6000 }
-        )
+      if (result?.action === 'archived') {
+        toast.success('Canal arquivado e removido da listagem.')
       } else {
-        toast.error('Falha ao remover canal')
+        toast.success('Canal removido com sucesso.')
       }
     },
+    onError: () => toast.error('Falha ao remover canal'),
   })
 
   const testMutation = useMutation({
@@ -630,8 +623,8 @@ export default function AlertsPage() {
           <div className="flex items-start gap-2 rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800">
             <AlertTriangle className="h-3.5 w-3.5 mt-0.5 shrink-0" />
             <span>
-              Canais com histórico de entregas <strong>não podem ser excluídos</strong>. Se este
-              canal já enviou notificações, use <strong>Desativar</strong> para pausá-lo.
+              Se o canal possuir histórico de entregas, será <strong>arquivado</strong> em vez de
+              excluído fisicamente. Em ambos os casos ele desaparece da listagem.
             </span>
           </div>
           <DialogFooter>
@@ -650,6 +643,26 @@ export default function AlertsPage() {
         </DialogContent>
       </Dialog>
     </div>
+  )
+}
+
+function CopyButton({ value, title }) {
+  const [copied, setCopied] = useState(false)
+  async function handleCopy() {
+    if (!value) return
+    await navigator.clipboard.writeText(value)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
+  return (
+    <button
+      type="button"
+      onClick={handleCopy}
+      title={copied ? 'Copiado!' : (title ?? 'Copiar')}
+      className="shrink-0 text-muted-foreground hover:text-foreground transition-colors"
+    >
+      {copied ? <Check className="h-3 w-3 text-green-600" /> : <Copy className="h-3 w-3" />}
+    </button>
   )
 }
 
@@ -674,12 +687,28 @@ function ChannelCard({ channel, canManage, isTesting, isTogglingStatus, testResu
             {isEnabled ? 'Ativo' : 'Inativo'}
           </Badge>
         </div>
-        <CardDescription className="text-xs font-mono truncate pl-6">
-          {channel.endpointUrl}
-        </CardDescription>
       </CardHeader>
 
       <CardContent className="space-y-3">
+        {/* Metadados do endpoint */}
+        <div className="rounded-md bg-muted/40 px-3 py-2.5 space-y-1.5 text-xs font-mono">
+          <MetaRow label="URL" value={channel.endpointUrl} copyTitle="Copiar URL completa" />
+          {channel.endpointOrigin && (
+            <MetaRow label="Origem" value={channel.endpointOrigin} />
+          )}
+          {channel.webhookPath && (
+            <MetaRow label="Path" value={channel.webhookPath} copyTitle="Copiar path do webhook" />
+          )}
+          {channel.webhookPathName && (
+            <MetaRow
+              label="Nome do path"
+              value={channel.webhookPathName}
+              copyTitle="Copiar nome do path"
+              hint="Use no campo Path do node Webhook no n8n"
+            />
+          )}
+        </div>
+
         {headerEntries.length > 0 && (
           <div className="space-y-1">
             <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
@@ -761,5 +790,20 @@ function ChannelCard({ channel, canManage, isTesting, isTogglingStatus, testResu
         <TestResultCard result={testResult} />
       </CardContent>
     </Card>
+  )
+}
+
+function MetaRow({ label, value, copyTitle, hint }) {
+  return (
+    <div className="space-y-0.5">
+      <div className="flex items-center gap-2">
+        <span className="text-muted-foreground w-24 shrink-0">{label}:</span>
+        <span className="truncate flex-1 text-foreground/80">{value}</span>
+        {value && <CopyButton value={value} title={copyTitle} />}
+      </div>
+      {hint && (
+        <p className="text-[10px] text-sky-700 dark:text-sky-400 pl-24">→ {hint}</p>
+      )}
+    </div>
   )
 }
