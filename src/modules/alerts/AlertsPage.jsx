@@ -16,6 +16,9 @@ import {
   PowerOff,
   Power,
   Trash2,
+  RefreshCw,
+  Copy,
+  Check,
 } from 'lucide-react'
 import { toast } from 'sonner'
 import {
@@ -56,6 +59,12 @@ import { cn } from '@/lib/utils'
 
 const ROLE_WEIGHT = { owner: 4, admin: 3, operator: 2, viewer: 1 }
 
+function generateHexSecret(bytes) {
+  const arr = new Uint8Array(bytes)
+  crypto.getRandomValues(arr)
+  return Array.from(arr, (b) => b.toString(16).padStart(2, '0')).join('')
+}
+
 const channelSchema = z.object({
   name: z.string().min(1, 'Nome obrigatório'),
   endpointUrl: z.string().min(1, 'URL obrigatória').refine((v) => { try { new URL(v); return true } catch { return false } }, { message: 'URL inválida' }),
@@ -74,32 +83,71 @@ function formatDate(iso) {
   }).format(new Date(iso))
 }
 
-function SecretInput({ label, description, field }) {
+function SecretInput({ label, field, onRegenerate, helpText }) {
   const [show, setShow] = useState(false)
+  const [copied, setCopied] = useState(false)
+
+  async function handleCopy() {
+    if (!field.value) return
+    await navigator.clipboard.writeText(field.value)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
+
   return (
     <FormItem>
       <FormLabel>{label}</FormLabel>
       <FormControl>
-        <div className="relative">
-          <Input
-            type={show ? 'text' : 'password'}
-            placeholder="••••••••••••••••"
-            autoComplete="new-password"
-            className="pr-10"
-            {...field}
-          />
-          <button
+        <div className="flex gap-1.5">
+          <div className="relative min-w-0 flex-1">
+            <Input
+              type={show ? 'text' : 'password'}
+              autoComplete="new-password"
+              className="pr-8 font-mono text-xs"
+              {...field}
+            />
+            <button
+              type="button"
+              tabIndex={-1}
+              onClick={() => setShow((v) => !v)}
+              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+              aria-label={show ? 'Ocultar' : 'Mostrar'}
+            >
+              {show ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
+            </button>
+          </div>
+          <Button
             type="button"
-            tabIndex={-1}
-            onClick={() => setShow((v) => !v)}
-            className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-            aria-label={show ? 'Ocultar' : 'Mostrar'}
+            variant="outline"
+            size="icon"
+            className="h-9 w-9 shrink-0"
+            onClick={onRegenerate}
+            title="Regenerar valor"
           >
-            {show ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-          </button>
+            <RefreshCw className="h-3.5 w-3.5" />
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            size="icon"
+            className="h-9 w-9 shrink-0"
+            onClick={handleCopy}
+            title={copied ? 'Copiado!' : 'Copiar'}
+          >
+            {copied ? (
+              <Check className="h-3.5 w-3.5 text-green-600" />
+            ) : (
+              <Copy className="h-3.5 w-3.5" />
+            )}
+          </Button>
         </div>
       </FormControl>
-      {description && <FormDescription className="text-xs">{description}</FormDescription>}
+      {helpText && (
+        <FormDescription className="text-xs flex items-start gap-1 text-sky-700 dark:text-sky-400">
+          <span className="shrink-0">→</span>
+          <span>{helpText}</span>
+        </FormDescription>
+      )}
       <FormMessage />
     </FormItem>
   )
@@ -155,6 +203,19 @@ export default function AlertsPage() {
   const canManage = (ROLE_WEIGHT[role] ?? 0) >= ROLE_WEIGHT.admin
 
   const [createDialogOpen, setCreateDialogOpen] = useState(false)
+
+  function openCreateDialog() {
+    form.reset({
+      name: '',
+      endpointUrl: '',
+      webhookToken: generateHexSecret(16),
+      hmacSecret: generateHexSecret(32),
+      enabled: true,
+      timeoutMs: 10000,
+      maxAttempts: 8,
+    })
+    setCreateDialogOpen(true)
+  }
   const [deleteTarget, setDeleteTarget] = useState(null) // channel object para confirmar exclusão
   const [testResults, setTestResults] = useState({})
   const [deliveryFilter, setDeliveryFilter] = useState('')
@@ -292,7 +353,7 @@ export default function AlertsPage() {
         <TabsContent value="channels" className="space-y-4">
           {canManage && (
             <div className="flex justify-end">
-              <Button size="sm" onClick={() => setCreateDialogOpen(true)} data-testid="add-channel-btn">
+              <Button size="sm" onClick={openCreateDialog} data-testid="add-channel-btn">
                 <Plus className="h-4 w-4 mr-1.5" />
                 Novo canal
               </Button>
@@ -407,7 +468,7 @@ export default function AlertsPage() {
       {/* ── DIALOG: criar canal ── */}
       <Dialog
         open={createDialogOpen}
-        onOpenChange={(open) => { setCreateDialogOpen(open); if (!open) form.reset() }}
+        onOpenChange={(open) => { if (!open) { setCreateDialogOpen(false); form.reset() } }}
       >
         <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
           <DialogHeader>
@@ -470,8 +531,9 @@ export default function AlertsPage() {
                 render={({ field }) => (
                   <SecretInput
                     label="Webhook Token"
-                    description="Valor do header x-webhook-token esperado pelo n8n. Campo write-only."
                     field={field}
+                    onRegenerate={() => form.setValue('webhookToken', generateHexSecret(16), { shouldValidate: true })}
+                    helpText="Use este valor no Header Auth do n8n com o nome x-webhook-token"
                   />
                 )}
               />
@@ -481,8 +543,9 @@ export default function AlertsPage() {
                 render={({ field }) => (
                   <SecretInput
                     label="HMAC Secret"
-                    description="Chave usada para assinar o payload (x-dte-signature). Campo write-only."
                     field={field}
+                    onRegenerate={() => form.setValue('hmacSecret', generateHexSecret(32), { shouldValidate: true })}
+                    helpText="Use este valor no node de validação HMAC do n8n"
                   />
                 )}
               />
