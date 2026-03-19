@@ -34,9 +34,58 @@ export async function updateChannelStatus(channelId, enabled) {
 }
 
 /**
- * 200 → removido | 409 → possui histórico, não pode ser excluído
+ * 200 → { action: 'deleted' | 'archived' }
  */
 export async function deleteChannel(channelId) {
   const { data } = await client.delete(`/v1/alerts/channels/${channelId}`)
+  return data.data
+}
+
+// ─── Routings ────────────────────────────────────────────────────────────────
+
+export async function getRoutings() {
+  const { data } = await client.get('/v1/alerts/routings')
+  return data.data
+}
+
+export async function createRouting(payload) {
+  const { data } = await client.post('/v1/alerts/routings', payload)
+  return data.data
+}
+
+export async function updateRoutingStatus(routingId, enabled) {
+  const { data } = await client.patch(`/v1/alerts/routings/${routingId}/status`, { enabled })
+  return data.data
+}
+
+export async function deleteRouting(routingId) {
+  const { data } = await client.delete(`/v1/alerts/routings/${routingId}`)
+  return data.data
+}
+
+// ─── Recipients ──────────────────────────────────────────────────────────────
+
+export async function getRecipients() {
+  const { data } = await client.get('/v1/alerts/recipients')
+  return data.data
+}
+
+export async function createRecipient(payload) {
+  const { data } = await client.post('/v1/alerts/recipients', payload)
+  return data.data
+}
+
+export async function updateRecipient(recipientId, payload) {
+  const { data } = await client.patch(`/v1/alerts/recipients/${recipientId}`, payload)
+  return data.data
+}
+
+export async function updateRecipientStatus(recipientId, enabled) {
+  const { data } = await client.patch(`/v1/alerts/recipients/${recipientId}/status`, { enabled })
+  return data.data
+}
+
+export async function deleteRecipient(recipientId) {
+  const { data } = await client.delete(`/v1/alerts/recipients/${recipientId}`)
   return data.data
 }
