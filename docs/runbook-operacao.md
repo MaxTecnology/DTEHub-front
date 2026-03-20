@@ -15,16 +15,21 @@ Objetivo: procedimento padrao para operacao, contingencia e recuperacao do produ
 3. validar monitoramento operacional:
    - `GET /v1/metrics/dte-http`
    - `GET /v1/ops/dashboard`
+   - `GET /v1/auth/status`
 
 ## 2. Rotina operacional recomendada
 
-1. sincronizar mensagens:
-   - `npm run api:dte-ingest-messages`
-2. processar notificacoes:
+1. sincronizacao automatica:
+   - manter `api:dte-sync-scheduler` ativo
+   - horario recomendado: `05:00`
+2. sincronizacao manual:
+   - usar `POST /v1/sync/messages` apenas para administracao/controlada
+   - esse fluxo usa autenticacao interativa e nao deve herdar cooldown aberto pelo scheduler
+3. processar notificacoes:
    - `npm run api:notify-worker`
-3. executar health monitor:
+4. executar health monitor:
    - `npm run api:dte-health-worker`
-4. acompanhar KPI:
+5. acompanhar KPI:
    - nao lidas por empresa (`/v1/companies?onlyWithUnread=true`)
    - eventos (`/v1/events/unread`)
    - dashboard (`/v1/ops/dashboard`)
@@ -40,6 +45,11 @@ Objetivo: procedimento padrao para operacao, contingencia e recuperacao do produ
    - `syncJobs.failed` crescente
    - `messages.unread` crescendo sem queda
    - `incidents.openIncidents > 0`
+4. `GET /v1/auth/status` com:
+   - `refreshDegraded=true`
+   - `refreshFailureCount` crescente
+   - `refreshLastError` repetindo erro 500 de autenticacao
+   - observacao: esse estado reflete o refresh automatico/background
 
 ## 4. Contingencia por cenario
 
@@ -65,7 +75,16 @@ Objetivo: procedimento padrao para operacao, contingencia e recuperacao do produ
 4. se necessario, novo login via PFX:
    - `npm run api:dte-login-pfx`
 
-### 4.3 Circuit breaker aberto em endpoint critico
+### 4.3 Login DTE instavel (endpoint de autenticacao retornando 500)
+
+1. consultar `GET /v1/auth/status`.
+2. se `refreshDegraded=true`, nao trocar certificado como primeira resposta.
+3. aguardar `refreshDegradedUntil` antes de nova tentativa forcada.
+4. em ambiente com DTE lenta, usar `DTE_HTTP_REQUEST_TIMEOUT_MS=45000` como baseline operacional.
+5. se `authenticated=true`, reutilizar sessao atual e evitar loops de refresh.
+6. `POST /v1/auth/refresh` e `POST /v1/certificates/{certificateId}/test-login` sao fluxos interativos; eles nao devem ser bloqueados por degradacao aberta pelo scheduler/sync.
+
+### 4.4 Circuit breaker aberto em endpoint critico
 
 1. consultar metricas:
    - `GET /v1/metrics/dte-http`
@@ -74,7 +93,7 @@ Objetivo: procedimento padrao para operacao, contingencia e recuperacao do produ
 4. executar nova tentativa controlada apos janela.
 5. se persistir, tratar como indisponibilidade DTE (secao 4.1).
 
-### 4.4 Falha de notificacao webhook
+### 4.5 Falha de notificacao webhook
 
 1. verificar filas/entregas:
    - `GET /v1/alerts/deliveries`
@@ -103,4 +122,7 @@ Objetivo: procedimento padrao para operacao, contingencia e recuperacao do produ
    - ingest
    - consulta API
    - notificacao
+
+
+
 

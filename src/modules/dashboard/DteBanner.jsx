@@ -47,7 +47,7 @@ export function AuthDegradedBanner({ health }) {
       data-testid="auth-degraded-banner"
     >
       <ShieldAlert className="h-4 w-4" />
-      <AlertTitle>DTE com instabilidade de autenticação</AlertTitle>
+      <AlertTitle>O refresh automático da DTE está com instabilidade</AlertTitle>
       <AlertDescription className="space-y-1 text-sm">
         {until && (
           <p>Nova tentativa automática após: <strong>{until}</strong></p>
@@ -61,8 +61,8 @@ export function AuthDegradedBanner({ health }) {
           </p>
         )}
         <p className="text-xs mt-1.5 text-orange-700 dark:text-orange-400">
-          O sistema pode continuar operando com a sessão DTE existente enquanto ela permanecer válida.
-          A renovação automática será retomada após o período de cooldown.
+          Isso afeta apenas o fluxo automático em background. A sessão DTE atual continua válida
+          e admins podem realizar sincronização manual ou renovação de autenticação normalmente.
         </p>
       </AlertDescription>
     </Alert>

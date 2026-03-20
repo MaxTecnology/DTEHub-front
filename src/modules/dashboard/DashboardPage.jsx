@@ -81,9 +81,11 @@ export default function DashboardPage() {
 
   const dteStatus = deriveStatus(health)
   const unread = dashboard?.messages?.unread ?? 0
+  const isAuthDegraded = health?.refreshDegraded === true
 
-  // Botão de refresh visível apenas quando: admin+, autenticado e sem degradação ativa
-  const showRefreshBtn = canRefreshAuth && health?.canRefresh && !health?.refreshDegraded
+  // Botão de refresh: visível para admin+ quando canRefresh=true (independente de refreshDegraded,
+  // pois POST /v1/auth/refresh é fluxo interativo e não herda cooldown do scheduler automático)
+  const showRefreshBtn = canRefreshAuth && health?.canRefresh
 
   return (
     <div className="flex flex-col gap-6 p-4 sm:p-6">
@@ -97,10 +99,19 @@ export default function DashboardPage() {
               disabled={refreshMutation.isPending}
               size="sm"
               className="shrink-0"
+              title={
+                isAuthDegraded
+                  ? 'Tentativa manual de renovação (fluxo interativo, independente do scheduler automático)'
+                  : 'Renovar autenticação DTE manualmente'
+              }
             >
               <KeyRound className={cn('h-4 w-4 mr-2', refreshMutation.isPending && 'animate-pulse')} />
               <span className="hidden sm:inline">
-                {refreshMutation.isPending ? 'Renovando...' : 'Renovar auth DTE'}
+                {refreshMutation.isPending
+                  ? 'Renovando...'
+                  : isAuthDegraded
+                    ? 'Renovar manualmente'
+                    : 'Renovar auth DTE'}
               </span>
               <span className="sm:hidden">Auth</span>
             </Button>
@@ -111,6 +122,7 @@ export default function DashboardPage() {
               disabled={syncMutation.isPending}
               size="sm"
               className="shrink-0"
+              title="Sincronização manual usa autenticação interativa. Mesmo com instabilidade no refresh automático, admins podem sincronizar manualmente."
             >
               <RefreshCw className={cn('h-4 w-4 mr-2', syncMutation.isPending && 'animate-spin')} />
               <span className="hidden sm:inline">
