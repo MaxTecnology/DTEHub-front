@@ -14,3 +14,8 @@ export async function startSync(params = {}) {
   const { data } = await client.post('/v1/sync/messages', params)
   return data.data // { jobId }
 }
+
+export async function refreshAuth() {
+  const { data } = await client.post('/v1/auth/refresh')
+  return data.data
+}
